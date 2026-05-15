@@ -8,103 +8,121 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Inter;}
+:root{
+    --primary:#7b5cf0;
+    --secondary:#5a3ee6;
+    --bg:#f5f6fa;
+}
 
-body{background:#f5f6fa;}
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Inter;
+}
 
-.container{display:flex;height:100vh;}
+body{
+    background:var(--bg);
+}
+
+.container{
+    display:flex;
+    min-height:100vh;
+}
 
 /* SIDEBAR */
 .left{
-width:250px;
-background:linear-gradient(135deg,#7b5cf0,#5a3ee6);
-color:#fff;
-padding:25px;
-display:flex;
-flex-direction:column;
+    width:250px;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    color:#fff;
+    padding:25px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
 }
 
+.left h2{font-size:22px;}
+
 .menu{
-display:flex;
-flex-direction:column;
-gap:10px;
-margin-top:30px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:30px;
 }
 
 .menu a{
-color:#fff;
-text-decoration:none;
-padding:12px;
-border-radius:10px;
-cursor:pointer;
-opacity:0.85;
-transition:0.3s;
+    color:#fff;
+    text-decoration:none;
+    padding:12px;
+    border-radius:10px;
+    cursor:pointer;
+    opacity:0.9;
+    transition:0.3s;
 }
 
 .menu a:hover{
-background:rgba(255,255,255,0.15);
-transform:translateX(5px);
-opacity:1;
+    background:rgba(255,255,255,0.15);
 }
 
 /* MAIN */
 .right{
-flex:1;
-padding:30px;
-overflow:auto;
+    flex:1;
+    padding:30px;
 }
 
-.section{display:none;}
-.section.active{display:block;}
+/* SECTIONS */
+.section{
+    display:none;
+}
+.section.active{
+    display:block;
+}
 
 /* CARD */
 .card{
-background:#fff;
-padding:15px;
-border-radius:10px;
-margin-bottom:10px;
-box-shadow:0 5px 15px rgba(0,0,0,0.05);
+    background:#fff;
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:10px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.05);
 }
 
 /* INPUT */
 input,textarea{
-width:100%;
-padding:8px;
-margin:5px 0;
-border:1px solid #ddd;
-border-radius:6px;
+    width:100%;
+    padding:8px;
+    margin:5px 0;
+    border:1px solid #ddd;
+    border-radius:6px;
 }
 
 /* BUTTON */
 button{
-background:#7b5cf0;
-color:#fff;
-border:none;
-padding:8px 12px;
-border-radius:6px;
-cursor:pointer;
-margin-top:8px;
+    background:var(--primary);
+    color:#fff;
+    border:none;
+    padding:8px 12px;
+    border-radius:6px;
+    cursor:pointer;
 }
 
-button:hover{background:#5a3ee6;}
+button:hover{
+    background:var(--secondary);
+}
 
+/* SKILLS */
 .skill-box{
-display:flex;
-flex-wrap:wrap;
-gap:8px;
-margin-top:10px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
 }
 
 .skill-box label{
-background:#fff;
-padding:8px 10px;
-border-radius:6px;
-border:1px solid #ddd;
-cursor:pointer;
-display:flex;
-gap:6px;
-align-items:center;
-font-size:14px;
+    background:#fff;
+    border:1px solid #ddd;
+    padding:6px 10px;
+    border-radius:6px;
+    cursor:pointer;
 }
 </style>
 </head>
@@ -124,7 +142,6 @@ font-size:14px;
 <a onclick="showTab('profile')">Profile</a>
 <a onclick="logout()">Logout</a>
 </div>
-
 </div>
 </div>
 
@@ -137,7 +154,7 @@ font-size:14px;
 <div id="jobs"></div>
 </div>
 
-<!-- NOTIFICATIONS -->
+<!-- NOTIF -->
 <div id="notifications" class="section">
 <h2>Notifications</h2>
 <div id="notifList"></div>
@@ -151,7 +168,7 @@ font-size:14px;
 <input id="pemail" placeholder="Email">
 <input id="pphone" placeholder="Phone">
 
-<button onclick="saveProfile()">Save Profile</button>
+<button onclick="saveProfile()">Save</button>
 </div>
 
 <!-- APPLY -->
@@ -166,9 +183,8 @@ font-size:14px;
 <input id="applyEmail" placeholder="Email">
 <textarea id="applyMsg" placeholder="Message"></textarea>
 
-<button onclick="submitApply()">Submit Application</button>
-<button onclick="goBackJobs()" style="background:#17a2b8;">⬅ Back</button>
-
+<button onclick="submitApply()">Submit</button>
+<button onclick="goBack()">Back</button>
 </div>
 
 </div>
@@ -186,12 +202,9 @@ let selectedSkills = [];
 function showTab(tab){
 document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
 document.getElementById(tab).classList.add("active");
-
-if(tab === "notifications") renderNotifications();
-if(tab === "dashboard") renderJobs();
 }
 
-/* LOGOUT */
+/* LOGOUT FIXED */
 function logout(){
 localStorage.removeItem("currentUser");
 window.location.href = "index.html";
@@ -201,8 +214,7 @@ window.location.href = "index.html";
 function renderJobs(){
 let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
 
-document.getElementById("jobs").innerHTML =
-jobs.map((j,i)=>`
+document.getElementById("jobs").innerHTML = jobs.map((j,i)=>`
 <div class="card" onclick="selectJob(${i})">
 <h3>${j.title}</h3>
 <p>${j.company}</p>
@@ -213,8 +225,8 @@ jobs.map((j,i)=>`
 /* SELECT JOB */
 function selectJob(i){
 let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
-
 selectedJob = jobs[i];
+
 selectedSkills = [];
 
 document.getElementById("jobTitle").innerText = selectedJob.title;
@@ -223,70 +235,77 @@ document.getElementById("applyName").value = currentUser.name || "";
 document.getElementById("applyEmail").value = currentUser.email || "";
 document.getElementById("applyMsg").value = "";
 
+renderSkills();
+
 showTab("applyBox");
 }
 
-/* APPLY */
-function submitApply(){
+/* SKILLS */
+function renderSkills(){
+let skills = selectedJob.skills || ["HTML","CSS","JS"];
 
-let name = document.getElementById("applyName").value;
-let email = document.getElementById("applyEmail").value.toLowerCase();
-let msg = document.getElementById("applyMsg").value;
-
-if(!name || !email || !msg){
-alert("Fill all fields!");
-return;
+document.getElementById("skillApplyBox").innerHTML =
+skills.map(s=>`
+<label>
+<input type="checkbox" value="${s}" onchange="toggleSkill(this)">
+${s}
+</label>
+`).join("");
 }
 
+function toggleSkill(el){
+if(el.checked){
+selectedSkills.push(el.value);
+}else{
+selectedSkills = selectedSkills.filter(x=>x!==el.value);
+}
+}
+
+/* APPLY + NOTIFICATION FIX */
+function submitApply(){
+
+let name = applyName.value;
+let email = applyEmail.value.toLowerCase();
+let msg = applyMsg.value;
+
 let applicants = JSON.parse(localStorage.getItem("applicants")) || [];
-
-applicants.push({
-name,
-email,
-position: selectedJob.title,
-message: msg,
-skills: selectedSkills,
-status: "Applied"
-});
-
-localStorage.setItem("applicants", JSON.stringify(applicants));
-
-/* ✅ FIXED NOTIFICATION */
 let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
 
-if(!Array.isArray(notifications)) notifications = [];
-
-notifications.push({
-email: email.toLowerCase(),
-message: "✅ Applied for " + selectedJob.title,
-type: "Applied",
-date: new Date().toLocaleString()
+applicants.push({
+name,email,
+position:selectedJob.title,
+skills:selectedSkills,
+status:"Applied"
 });
 
-localStorage.setItem("notifications", JSON.stringify(notifications));
+notifications.push({
+email,
+message:"Applied for " + selectedJob.title,
+type:"Applied",
+date:new Date().toLocaleString()
+});
 
-alert("Application Sent!");
+localStorage.setItem("applicants",JSON.stringify(applicants));
+localStorage.setItem("notifications",JSON.stringify(notifications));
 
+alert("Sent!");
 showTab("notifications");
 renderNotifications();
 }
 
-/* NOTIFICATIONS */
+/* NOTIFICATIONS FIXED */
 function renderNotifications(){
 
-let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
-if(!Array.isArray(notifications)) notifications = [];
+let all = JSON.parse(localStorage.getItem("notifications")) || [];
 
-let myEmail = (currentUser.email || "").toLowerCase();
-
-let myNotifs = notifications.filter(n =>
-(n.email || "").toLowerCase() === myEmail
+let my = all.filter(n =>
+(n.email||"").toLowerCase() === currentUser.email
 );
 
 document.getElementById("notifList").innerHTML =
-myNotifs.length === 0
-? "<p>No notifications yet</p>"
-: myNotifs.map(n=>`
+my.length === 0
+? "<p>No notifications</p>"
+: my.map(n=>`
 <div class="card">
 <p>${n.message}</p>
 <small>${n.date}</small>
@@ -294,26 +313,28 @@ myNotifs.length === 0
 `).join("");
 }
 
-/* AUTO SYNC */
-setInterval(renderNotifications, 2000);
-
-/* SAVE PROFILE */
+/* PROFILE */
 function saveProfile(){
-
 currentUser = {
-name: document.getElementById("pname").value,
-email: document.getElementById("pemail").value.toLowerCase(),
-phone: document.getElementById("pphone").value
+name:pname.value,
+email:pemail.value.toLowerCase(),
+phone:pphone.value
 };
 
-localStorage.setItem("currentUser", JSON.stringify(currentUser));
+localStorage.setItem("currentUser",JSON.stringify(currentUser));
+alert("Saved!");
+}
 
-alert("Profile Saved!");
+/* BACK */
+function goBack(){
+showTab("dashboard");
 }
 
 /* INIT */
 renderJobs();
 renderNotifications();
+
+setInterval(renderNotifications,2000);
 
 </script>
 

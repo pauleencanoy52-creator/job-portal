@@ -8,192 +8,82 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter;}
+
+.container{display:flex;height:100vh;}
+
+.left{
+width:25%;
+min-width:240px;
+background:linear-gradient(135deg,#7b5cf0,#5a3ee6);
+color:#fff;
+padding:30px;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
 }
 
-.container {
-    display: flex;
-    height: 100vh;
+.menu{
+display:flex;
+flex-direction:column;
+gap:10px;
+margin-top:30px;
 }
 
-/* SIDEBAR */
-.left {
-    width: 25%;
-    min-width: 240px;
-    background: linear-gradient(135deg, #7b5cf0, #5a3ee6);
-    color: #fff;
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+.menu a{
+color:#fff;
+text-decoration:none;
+padding:12px 15px;
+border-radius:10px;
+opacity:0.85;
 }
 
-.logo h2 { font-size: 24px; margin-bottom: 5px; }
-.logo p { font-size: 13px; opacity: 0.9; }
-
-.menu {
-    margin-top: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+.menu a:hover{
+background:rgba(255,255,255,0.15);
 }
 
-.menu a {
-    color: #fff;
-    text-decoration: none;
-    padding: 12px 15px;
-    border-radius: 10px;
-    font-size: 14px;
-    opacity: 0.85;
-    transition: 0.3s;
+.right{
+flex:1;
+background:#f7f7ff;
+padding:40px;
+overflow:auto;
 }
 
-.menu a:hover {
-    background: rgba(255,255,255,0.15);
-    opacity: 1;
-    transform: translateX(5px);
+.card{
+background:#fff;
+padding:20px;
+border-radius:12px;
+box-shadow:0 5px 15px rgba(0,0,0,0.08);
 }
 
-.menu a.active {
-    background: rgba(255,255,255,0.25);
-    font-weight: 600;
+input,select,textarea{
+width:100%;
+padding:10px;
+margin:8px 0;
+border-radius:8px;
+border:1px solid #ddd;
 }
 
-/* LOGOUT STYLE */
-.menu-logout {
-    color: #fff;
-    text-decoration: none;
-    padding: 12px 15px;
-    border-radius: 10px;
-    font-size: 14px;
-    opacity: 0.85;
-    transition: 0.3s;
-    display: block;
-    margin-top: 10px;
+button{
+background:#7b5cf0;
+color:#fff;
+border:none;
+padding:10px 15px;
+border-radius:8px;
+cursor:pointer;
 }
 
-.menu-logout:hover {
-    background: rgba(255,255,255,0.15);
-    opacity: 1;
-    transform: translateX(5px);
-}
+button:hover{background:#5a3ee6;}
 
-.footer {
-    font-size: 12px;
-    opacity: 0.8;
+.job-item{
+background:#fff;
+padding:15px;
+border-radius:10px;
+margin-top:10px;
+display:flex;
+justify-content:space-between;
+align-items:center;
 }
-
-/* MAIN */
-.right {
-    flex: 1;
-    background: #f7f7ff;
-    padding: 40px;
-}
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.header h1 {
-    color: #333;
-}
-
-.card {
-    margin-top: 25px;
-    background: #fff;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-}
-
-input, textarea, select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 8px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
-}
-
-textarea {
-    height: 120px;
-    resize: none;
-}
-
-.btn {
-    background: #7b5cf0;
-    color: #fff;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.btn:hover {
-    background: #5a3ee6;
-}
-
-/* JOB LISTING */
-.job-listing {
-    margin-top: 30px;
-    padding: 15px;
-    background: #f1f1f1;
-    border-radius: 10px;
-}
-
-.job-item {
-    background: #fff;
-    padding: 15px;
-    border-radius: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.job-item button {
-    background: #f44336;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-.job-item button:hover {
-    background: #e53935;
-}
-
-.job-item p {
-    margin: 0;
-    font-size: 14px;
-}
-
-.toggle-btns {
-    margin-bottom: 20px;
-}
-
-.toggle-btns button {
-    background: #7b5cf0;
-    color: #fff;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 8px;
-    margin-right: 10px;
-    cursor: pointer;
-}
-
-.toggle-btns button:hover {
-    background: #5a3ee6;
-}
-
 </style>
 </head>
 
@@ -201,178 +91,134 @@ textarea {
 
 <div class="container">
 
-    <!-- SIDEBAR -->
-    <div class="left">
-        <div>
-            <div class="logo">
-                <h2>Job Portal</h2>
-                <p>Admin Panel 👋</p>
-            </div>
+<!-- SIDEBAR -->
+<div class="left">
+<div>
+<h2>Job Portal</h2>
 
-            <div class="menu">
-                <a href="dashboard.html">Dashboard</a>
-                <a href="job-post.html" class="active">Post Job</a>
-                <a href="applicants.html">Applicants</a>
-                <a href="interviews.html">Interviews</a>
-                <a href="hired.html">Hired</a>
+<div class="menu">
+<a href="dashboard.html">Dashboard</a>
+<a href="job-post.html">Post Job</a>
+<a href="applicants.html">Applicants</a>
+<a href="interviews.html">Interviews</a>
+<a href="hired.html">Hired</a>
+<a href="#" onclick="logout()">Logout</a>
+</div>
 
-                <!-- LOGOUT -->
-                <a href="#" class="menu-logout" onclick="logout()">Logout</a>
-            </div>
-        </div>
+</div>
+</div>
 
-        <p class="footer">© 2026 Job Portal System</p>
-    </div>
+<!-- MAIN -->
+<div class="right">
 
-    <!-- MAIN -->
-    <div class="right">
+<h1>Post a Job</h1>
 
-        <div class="header">
-            <h1>Post a Job</h1>
-            <span>Hello, Admin!</span>
-        </div>
+<div class="card">
 
-        <!-- Toggle Buttons for Post/View Jobs -->
-        <div class="toggle-btns">
-            <button onclick="showPostForm()">Post a New Job</button>
-            <button onclick="showJobsList()">View Posted Jobs</button>
-        </div>
+<form id="jobForm">
 
-        <!-- Job Post Form (Initially Visible) -->
-        <div id="postFormSection" class="card">
-            <form id="jobForm">
+<input id="title" placeholder="Job Title" required>
+<input id="company" placeholder="Company" required>
 
-                <label>Job Title</label>
-                <input type="text" id="title" required>
+<select id="type">
+<option>Full Time</option>
+<option>Part Time</option>
+<option>Internship</option>
+</select>
 
-                <label>Company</label>
-                <input type="text" id="company" required>
+<textarea id="description" placeholder="Job Description"></textarea>
 
-                <label>Job Type</label>
-                <select id="type">
-                    <option>Full Time</option>
-                    <option>Part Time</option>
-                    <option>Internship</option>
-                </select>
+<input id="skills" placeholder="Skills (comma separated)">
 
-                <label>Job Description</label>
-                <textarea id="description" placeholder="Job Description"></textarea>
-                <label>Required Skills</label>
-                <input type="text" id="skills" placeholder="HTML, CSS, JavaScript">
-                <button type="submit" class="btn">Post Job</button>
+<button type="submit">Post Job</button>
 
-            </form>
-        </div>
+</form>
 
-        <!-- Job Listing Section (Initially Hidden) -->
-        <div id="jobsListSection" class="job-listing" style="display: none;">
-            <h3>Jobs You’ve Posted</h3>
-            <!-- Job items will be dynamically displayed here -->
-        </div>
+</div>
 
-    </div>
+<!-- LIST -->
+<div class="card" style="margin-top:20px;">
+<h3>Posted Jobs</h3>
+<div id="jobList"></div>
+</div>
+
+</div>
 
 </div>
 
 <script>
 
-// LOGOUT
 function logout(){
-    localStorage.removeItem("isLoggedIn");
-    window.location.href = "Login.html";
+localStorage.removeItem("currentUser");
+window.location.href = "login.html";
 }
 
-// POST JOB
+/* POST JOB */
 document.getElementById("jobForm").addEventListener("submit", function(e){
-    e.preventDefault();
+e.preventDefault();
 
-   const job = {
-    id: Date.now(),
-    title: document.getElementById("title").value,
-    company: document.getElementById("company").value,
-    type: document.getElementById("type").value,
-
-    // ✅ FIXED LINE
-    description: document.getElementById("description").value,
-
-    skills: document.getElementById("skills").value
-        .split(",")
-        .map(s => s.trim().toLowerCase())
+const job = {
+id: Date.now(),
+title: document.getElementById("title").value,
+company: document.getElementById("company").value,
+type: document.getElementById("type").value,
+description: document.getElementById("description").value,
+skills: document.getElementById("skills").value
+    .split(",")
+    .map(s => s.trim().toLowerCase())
 };
-    // ✅ ADDED ONLY THIS
-    skills: document.getElementById("skills").value
-        .split(",")
-        .map(s => s.trim().toLowerCase())
 
+let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+jobs.push(job);
 
-    let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
-    jobs.push(job);
-    localStorage.setItem("jobs", JSON.stringify(jobs));
+localStorage.setItem("jobs", JSON.stringify(jobs));
 
-    alert("Job Posted Successfully!");
+alert("Job Posted!");
 
-    this.reset();
-
-    setTimeout(() => {
-        loadJobs();  // Reload jobs
-    }, 300);
+this.reset();
+loadJobs();
 });
 
-// Load Jobs from LocalStorage and Display
-function loadJobs() {
-    const jobs = JSON.parse(localStorage.getItem("jobs")) || [];
-    const jobsList = document.getElementById("jobsListSection");
+/* LOAD JOBS */
+function loadJobs(){
 
-    jobsList.innerHTML = '<h3>Jobs You’ve Posted</h3>';  // Reset the job list header
+let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+let container = document.getElementById("jobList");
 
-    if (jobs.length === 0) {
-        jobsList.innerHTML += '<p>No jobs posted yet.</p>';
-        return;
-    }
+container.innerHTML = "";
 
-    jobs.forEach(job => {
-        const jobItem = document.createElement('div');
-        jobItem.classList.add('job-item');
-        
-        jobItem.innerHTML = `
-            <div>
-                <p><strong>Job Title:</strong> ${job.title}</p>
-                <p><strong>Company:</strong> ${job.company}</p>
-                <p><strong>Job Type:</strong> ${job.type}</p>
-                <p><strong>Job Description:</strong> ${job.desc}</p>
-                <p><strong>Skills:</strong> ${(job.skills || []).join(", ")}</p>
-            </div>
-            <button onclick="deleteJob(${job.id})">Delete</button>
-        `;
-
-        jobsList.appendChild(jobItem);
-    });
+if(jobs.length === 0){
+container.innerHTML = "<p>No jobs posted</p>";
+return;
 }
 
-// Delete Job from LocalStorage
-function deleteJob(jobId) {
-    let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
-    jobs = jobs.filter(job => job.id !== jobId);  // Filter out the job to be deleted
-    localStorage.setItem("jobs", JSON.stringify(jobs));
+jobs.forEach(job => {
+container.innerHTML += `
+<div class="job-item">
+<div>
+<b>${job.title}</b><br>
+${job.company}<br>
+<small>${job.type}</small>
+<p>${job.description || ""}</p>
+</div>
 
-    loadJobs();  // Reload the job list after deletion
+<button onclick="deleteJob(${job.id})">Delete</button>
+</div>
+`;
+});
+
 }
 
-// Show Post Job Form
-function showPostForm() {
-    document.getElementById("postFormSection").style.display = "block";
-    document.getElementById("jobsListSection").style.display = "none";
+/* DELETE */
+function deleteJob(id){
+let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+jobs = jobs.filter(j => j.id !== id);
+localStorage.setItem("jobs", JSON.stringify(jobs));
+loadJobs();
 }
 
-// Show Jobs List
-function showJobsList() {
-    document.getElementById("postFormSection").style.display = "none";
-    document.getElementById("jobsListSection").style.display = "block";
-    loadJobs();  // Load jobs when switching to view section
-}
-
-// Initial Load: Show Post Form
-showPostForm();
+/* INIT */
+loadJobs();
 
 </script>
 

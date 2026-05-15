@@ -8,121 +8,105 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-:root{
-    --primary:#7b5cf0;
-    --secondary:#5a3ee6;
-    --bg:#f5f6fa;
-}
-
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Inter;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Inter;
 }
 
 body{
-    background:var(--bg);
+background:#f5f6fa;
 }
 
 .container{
-    display:flex;
-    min-height:100vh;
+display:flex;
+min-height:100vh;
 }
 
 /* SIDEBAR */
 .left{
-    width:250px;
-    background:linear-gradient(135deg,var(--primary),var(--secondary));
-    color:#fff;
-    padding:25px;
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
+width:250px;
+background:linear-gradient(135deg,#7b5cf0,#5a3ee6);
+color:#fff;
+padding:25px;
 }
 
-.left h2{font-size:22px;}
-
 .menu{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    margin-top:30px;
+display:flex;
+flex-direction:column;
+gap:10px;
+margin-top:30px;
 }
 
 .menu a{
-    color:#fff;
-    text-decoration:none;
-    padding:12px;
-    border-radius:10px;
-    cursor:pointer;
-    opacity:0.9;
-    transition:0.3s;
+color:#fff;
+text-decoration:none;
+padding:12px;
+border-radius:10px;
+cursor:pointer;
+opacity:0.9;
 }
 
 .menu a:hover{
-    background:rgba(255,255,255,0.15);
+background:rgba(255,255,255,0.15);
 }
 
 /* MAIN */
 .right{
-    flex:1;
-    padding:30px;
+flex:1;
+padding:30px;
 }
 
-/* SECTIONS */
-.section{
-    display:none;
-}
-.section.active{
-    display:block;
-}
+.section{display:none;}
+.section.active{display:block;}
 
 /* CARD */
 .card{
-    background:#fff;
-    padding:15px;
-    border-radius:12px;
-    margin-bottom:10px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.05);
+background:#fff;
+padding:15px;
+border-radius:10px;
+margin-bottom:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.05);
 }
 
 /* INPUT */
 input,textarea{
-    width:100%;
-    padding:8px;
-    margin:5px 0;
-    border:1px solid #ddd;
-    border-radius:6px;
+width:100%;
+padding:8px;
+margin:5px 0;
+border:1px solid #ddd;
+border-radius:6px;
 }
 
 /* BUTTON */
 button{
-    background:var(--primary);
-    color:#fff;
-    border:none;
-    padding:8px 12px;
-    border-radius:6px;
-    cursor:pointer;
+background:#7b5cf0;
+color:#fff;
+border:none;
+padding:8px 12px;
+border-radius:6px;
+cursor:pointer;
 }
 
 button:hover{
-    background:var(--secondary);
+background:#5a3ee6;
 }
 
 /* SKILLS */
 .skill-box{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
+display:flex;
+flex-wrap:wrap;
+gap:8px;
 }
 
 .skill-box label{
-    background:#fff;
-    border:1px solid #ddd;
-    padding:6px 10px;
-    border-radius:6px;
-    cursor:pointer;
+background:#fff;
+border:1px solid #ddd;
+padding:6px 10px;
+border-radius:6px;
+cursor:pointer;
+font-size:14px;
 }
 </style>
 </head>
@@ -133,7 +117,6 @@ button:hover{
 
 <!-- SIDEBAR -->
 <div class="left">
-<div>
 <h2>User Panel</h2>
 
 <div class="menu">
@@ -141,7 +124,6 @@ button:hover{
 <a onclick="showTab('notifications')">Notifications</a>
 <a onclick="showTab('profile')">Profile</a>
 <a onclick="logout()">Logout</a>
-</div>
 </div>
 </div>
 
@@ -154,7 +136,7 @@ button:hover{
 <div id="jobs"></div>
 </div>
 
-<!-- NOTIF -->
+<!-- NOTIFICATIONS -->
 <div id="notifications" class="section">
 <h2>Notifications</h2>
 <div id="notifList"></div>
@@ -168,7 +150,7 @@ button:hover{
 <input id="pemail" placeholder="Email">
 <input id="pphone" placeholder="Phone">
 
-<button onclick="saveProfile()">Save</button>
+<button onclick="saveProfile()">Save Profile</button>
 </div>
 
 <!-- APPLY -->
@@ -183,7 +165,7 @@ button:hover{
 <input id="applyEmail" placeholder="Email">
 <textarea id="applyMsg" placeholder="Message"></textarea>
 
-<button onclick="submitApply()">Submit</button>
+<button onclick="submitApply()">Submit Application</button>
 <button onclick="goBack()">Back</button>
 </div>
 
@@ -193,7 +175,7 @@ button:hover{
 <script>
 
 let currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
-currentUser.email = (currentUser.email || "").toLowerCase();
+currentUser.email = (currentUser.email || "").toLowerCase().trim();
 
 let selectedJob = null;
 let selectedSkills = [];
@@ -202,9 +184,11 @@ let selectedSkills = [];
 function showTab(tab){
 document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
 document.getElementById(tab).classList.add("active");
+
+if(tab === "notifications") renderNotifications();
 }
 
-/* LOGOUT FIXED */
+/* LOGOUT */
 function logout(){
 localStorage.removeItem("currentUser");
 window.location.href = "index.html";
@@ -214,7 +198,8 @@ window.location.href = "index.html";
 function renderJobs(){
 let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
 
-document.getElementById("jobs").innerHTML = jobs.map((j,i)=>`
+document.getElementById("jobs").innerHTML =
+jobs.map((j,i)=>`
 <div class="card" onclick="selectJob(${i})">
 <h3>${j.title}</h3>
 <p>${j.company}</p>
@@ -236,7 +221,6 @@ document.getElementById("applyEmail").value = currentUser.email || "";
 document.getElementById("applyMsg").value = "";
 
 renderSkills();
-
 showTab("applyBox");
 }
 
@@ -261,25 +245,33 @@ selectedSkills = selectedSkills.filter(x=>x!==el.value);
 }
 }
 
-/* APPLY + NOTIFICATION FIX */
+/* APPLY + FIXED NOTIFICATION */
 function submitApply(){
 
 let name = applyName.value;
-let email = applyEmail.value.toLowerCase();
+let email = applyEmail.value.toLowerCase().trim();
 let msg = applyMsg.value;
+
+if(!name || !email || !msg){
+alert("Fill all fields!");
+return;
+}
 
 let applicants = JSON.parse(localStorage.getItem("applicants")) || [];
 let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
 
+if(!Array.isArray(notifications)) notifications = [];
+
 applicants.push({
-name,email,
+name,
+email,
 position:selectedJob.title,
 skills:selectedSkills,
 status:"Applied"
 });
 
 notifications.push({
-email,
+email: email,
 message:"Applied for " + selectedJob.title,
 type:"Applied",
 date:new Date().toLocaleString()
@@ -288,24 +280,28 @@ date:new Date().toLocaleString()
 localStorage.setItem("applicants",JSON.stringify(applicants));
 localStorage.setItem("notifications",JSON.stringify(notifications));
 
-alert("Sent!");
+alert("Application Sent!");
+
 showTab("notifications");
 renderNotifications();
 }
 
-/* NOTIFICATIONS FIXED */
+/* 🔥 FIXED NOTIFICATIONS (NO BLANK ISSUE) */
 function renderNotifications(){
 
-let all = JSON.parse(localStorage.getItem("notifications")) || [];
+let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
+if(!Array.isArray(notifications)) notifications = [];
 
-let my = all.filter(n =>
-(n.email||"").toLowerCase() === currentUser.email
+let myEmail = (currentUser.email || "").toLowerCase().trim();
+
+let myNotifs = notifications.filter(n =>
+(n.email || "").toLowerCase().trim() === myEmail
 );
 
 document.getElementById("notifList").innerHTML =
-my.length === 0
-? "<p>No notifications</p>"
-: my.map(n=>`
+myNotifs.length === 0
+? "<p>No notifications yet</p>"
+: myNotifs.map(n=>`
 <div class="card">
 <p>${n.message}</p>
 <small>${n.date}</small>
@@ -313,28 +309,25 @@ my.length === 0
 `).join("");
 }
 
+/* AUTO SYNC */
+setInterval(renderNotifications,2000);
+
 /* PROFILE */
 function saveProfile(){
 currentUser = {
 name:pname.value,
-email:pemail.value.toLowerCase(),
+email:pemail.value.toLowerCase().trim(),
 phone:pphone.value
 };
 
 localStorage.setItem("currentUser",JSON.stringify(currentUser));
-alert("Saved!");
-}
 
-/* BACK */
-function goBack(){
-showTab("dashboard");
+alert("Profile Saved!");
 }
 
 /* INIT */
 renderJobs();
 renderNotifications();
-
-setInterval(renderNotifications,2000);
 
 </script>
 

@@ -39,12 +39,7 @@ cursor:pointer;
 opacity:0.85;
 transition:0.3s;
 }
-
-.menu a:hover{
-background:rgba(255,255,255,0.15);
-transform:translateX(5px);
-opacity:1;
-}
+.menu a:hover{background:rgba(255,255,255,0.15);transform:translateX(5px);opacity:1;}
 
 .right{
 flex:1;
@@ -62,7 +57,6 @@ padding:15px;
 border-radius:10px;
 margin-bottom:10px;
 box-shadow:0 5px 15px rgba(0,0,0,0.05);
-cursor:pointer;
 }
 
 input,textarea{
@@ -121,7 +115,6 @@ font-size:14px;
 <a onclick="showTab('profile')">Profile</a>
 <a onclick="logout()">Logout</a>
 </div>
-
 </div>
 </div>
 
@@ -145,6 +138,9 @@ font-size:14px;
 <input id="pemail" placeholder="Email">
 <input id="pphone" placeholder="Phone">
 
+<h3>Skills (from admin)</h3>
+<div id="skillBox" class="skill-box"></div>
+
 <button onclick="saveProfile()">Save Profile</button>
 </div>
 
@@ -153,6 +149,7 @@ font-size:14px;
 
 <h3 id="jobTitle"></h3>
 
+<h4>Select Skills</h4>
 <div id="skillApplyBox" class="skill-box"></div>
 
 <input id="applyName" placeholder="Name">
@@ -160,8 +157,8 @@ font-size:14px;
 <textarea id="applyMsg" placeholder="Message"></textarea>
 
 <button onclick="submitApply()">Submit Application</button>
-<button onclick="goBackJobs()" style="background:#17a2b8;">⬅ Back</button>
 
+<button onclick="goBackJobs()" style="background:#17a2b8;">⬅ Back</button>
 </div>
 
 </div>
@@ -175,13 +172,12 @@ currentUser.email = (currentUser.email || "").toLowerCase();
 let selectedJob = null;
 let selectedSkills = [];
 
-/* NAV */
+/* TAB */
 function showTab(tab){
 document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
 document.getElementById(tab).classList.add("active");
 
 if(tab === "notifications") renderNotifications();
-if(tab === "dashboard") renderJobs();
 }
 
 /* LOGOUT */
@@ -199,14 +195,10 @@ renderJobs();
 /* JOBS */
 function renderJobs(){
 let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
-
-document.getElementById("jobs").innerHTML =
-jobs.length === 0
-? "<p>No jobs available</p>"
-: jobs.map((j,i)=>`
+document.getElementById("jobs").innerHTML = jobs.map((j,i)=>`
 <div class="card" onclick="selectJob(${i})">
-<h3>${j.title || "No Title"}</h3>
-<p>${j.company || ""}</p>
+<h3>${j.title}</h3>
+<p>${j.company}</p>
 </div>
 `).join("");
 }
@@ -218,9 +210,9 @@ selectedJob = jobs[i];
 
 selectedSkills = [];
 
-document.getElementById("jobTitle").innerText = selectedJob.title;
-
 renderApplySkills();
+
+document.getElementById("jobTitle").innerText = selectedJob.title;
 
 document.getElementById("applyName").value = currentUser.name || "";
 document.getElementById("applyEmail").value = currentUser.email || "";
@@ -267,7 +259,7 @@ let applicants = JSON.parse(localStorage.getItem("applicants")) || [];
 applicants.push({
 name,
 email,
-position: selectedJob?.title || "",
+position: selectedJob.title,
 message: msg,
 skills: selectedSkills,
 status: "Applied"
@@ -279,7 +271,7 @@ let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
 
 notifications.push({
 email,
-message: "Applied for " + selectedJob.title,
+message: "✅ Applied for " + selectedJob.title,
 type: "Applied",
 date: new Date().toLocaleString()
 });
@@ -292,7 +284,7 @@ showTab("notifications");
 renderNotifications();
 }
 
-/* NOTIFICATIONS */
+/* 🔥 FIXED NOTIFICATIONS (REAL-TIME SYNC) */
 function renderNotifications(){
 
 let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
@@ -306,15 +298,47 @@ let myNotifs = notifications.filter(n =>
 document.getElementById("notifList").innerHTML =
 myNotifs.length === 0
 ? "<p>No notifications yet</p>"
-: myNotifs.map((n)=>`
-<div class="card">
-<p><b>${n.type || "Info"}:</b> ${n.message}</p>
-<small>${n.date || ""}</small>
+: myNotifs.map((n,i)=>`
+
+<div class="card" style="
+border-left:5px solid ${
+n.type === "Rejected" ? "red" :
+n.type === "Hired" ? "green" :
+n.type === "Scheduled" ? "blue" :
+n.type === "Applied" ? "#7b5cf0" :
+"#ccc"
+};
+">
+
+<p>
+${n.type === "Rejected" ? "❌ <b>Rejected:</b> " : ""}
+${n.type === "Scheduled" ? "📅 <b>Interview:</b> " : ""}
+${n.type === "Hired" ? "🎉 <b>Hired:</b> " : ""}
+${n.type === "Applied" ? "✅ <b>Applied:</b> " : ""}
+${n.message}
+</p>
+
+<small>${n.date}</small><br>
+
+<button onclick="deleteNotif(${i})" style="background:red;margin-top:5px;">
+Delete
+</button>
+
 </div>
+
 `).join("");
 }
 
-setInterval(renderNotifications, 3000);
+/* AUTO SYNC NOTIFICATIONS (IMPORTANT FIX) */
+setInterval(renderNotifications, 2000);
+
+/* DELETE */
+function deleteNotif(i){
+let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
+notifications.splice(i,1);
+localStorage.setItem("notifications", JSON.stringify(notifications));
+renderNotifications();
+}
 
 /* PROFILE */
 function saveProfile(){

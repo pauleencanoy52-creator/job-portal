@@ -58,15 +58,22 @@ box-shadow:0 5px 15px rgba(0,0,0,0.05);
 cursor:pointer;
 }
 
-button{
-background:#7b5cf0;
-color:#fff;
-border:none;
-padding:10px;
-border-radius:8px;
-cursor:pointer;
+input,textarea{
+width:100%;
+padding:8px;
+margin:5px 0;
+border:1px solid #ddd;
+border-radius:6px;
 }
-button:hover{opacity:0.9;}
+
+button{
+padding:8px 12px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+margin-top:8px;
+}
+
 </style>
 </head>
 
@@ -94,24 +101,27 @@ button:hover{opacity:0.9;}
 <div id="jobs"></div>
 </div>
 
-<!-- APPLY VIEW -->
+<!-- NOTIFICATIONS -->
+<div id="notifications" class="section">
+<h2>Notifications</h2>
+<div id="notifList"></div>
+</div>
+
+<!-- APPLY -->
 <div id="applyBox" class="section">
 <h2>Apply Job</h2>
 
 <h3 id="jobTitle"></h3>
 
-<input id="name" placeholder="Your Name">
-<input id="email" placeholder="Your Email">
-<textarea id="msg" placeholder="Message"></textarea>
+<h4>Select Skills</h4>
+<div id="skillsBox"></div>
+
+<input id="applyName" placeholder="Name">
+<input id="applyEmail" placeholder="Email" readonly>
+<textarea id="applyMsg" placeholder="Message"></textarea>
 
 <button onclick="submitApply()">Submit Application</button>
-<button onclick="showTab('dashboard')" style="background:#17a2b8;">Back</button>
-</div>
-
-<!-- NOTIFICATIONS -->
-<div id="notifications" class="section">
-<h2>Notifications</h2>
-<div id="notifList"></div>
+<button onclick="showTab('dashboard')">⬅ Back</button>
 </div>
 
 </div>
@@ -119,35 +129,39 @@ button:hover{opacity:0.9;}
 
 <script>
 
-/* =====================
-   USER EMAIL
-===================== */
-function getUserEmail(){
-return (JSON.parse(localStorage.getItem("currentUser"))?.email || "").toLowerCase().trim();
-}
+/* =========================
+   GET USER FROM LOGIN
+========================= */
+let currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
+let userEmail = (currentUser.email || "").toLowerCase().trim();
 
-/* =====================
-   TAB SYSTEM
-===================== */
+/* =========================
+   GLOBAL
+========================= */
+let selectedJob = null;
+let selectedSkills = [];
+
+/* =========================
+   TAB SWITCH
+========================= */
 function showTab(tab){
 document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
 document.getElementById(tab).classList.add("active");
-renderNotifications();
+
+if(tab === "notifications") renderNotifications();
 }
 
-/* =====================
+/* =========================
    LOGOUT
-===================== */
+========================= */
 function logout(){
 localStorage.removeItem("currentUser");
-window.location.href="index.html";
+window.location.href = "index.html";
 }
 
-/* =====================
-   CLICK JOB
-===================== */
-let selectedJob = null;
-
+/* =========================
+   RENDER JOBS (CLICKABLE FIX)
+========================= */
 function renderJobs(){
 let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
 
@@ -155,34 +169,79 @@ document.getElementById("jobs").innerHTML =
 jobs.length === 0
 ? "<p>No jobs available</p>"
 : jobs.map((j,i)=>`
-<div class="card" onclick="openJob(${i})">
+<div class="card" onclick="selectJob(${i})">
 <h3>${j.title}</h3>
 <p>${j.company}</p>
 </div>
 `).join("");
 }
 
-function openJob(i){
+/* =========================
+   SELECT JOB (FIX CLICK)
+========================= */
+function selectJob(i){
 let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+
 selectedJob = jobs[i];
+selectedSkills = [];
 
 document.getElementById("jobTitle").innerText = selectedJob.title;
 
-document.getElementById("name").value = "";
-document.getElementById("email").value = getUserEmail();
+/* AUTO EMAIL FROM LOGIN */
+document.getElementById("applyEmail").value = userEmail;
+document.getElementById("applyName").value = currentUser.name || "";
+
+/* SKILLS */
+let skills = selectedJob.skills || ["HTML","CSS","JS"];
+
+document.getElementById("skillsBox").innerHTML =
+skills.map(s=>`
+<label>
+<input type="checkbox" value="${s}" onchange="toggleSkill(this)">
+${s}
+</label>
+`).join("");
 
 showTab("applyBox");
 }
 
-/* =====================
-   APPLY + NOTIF
-===================== */
+/* =========================
+   TOGGLE SKILL
+========================= */
+function toggleSkill(el){
+if(el.checked){
+selectedSkills.push(el.value);
+}else{
+selectedSkills = selectedSkills.filter(s=>s!==el.value);
+}
+}
+
+/* =========================
+   SUBMIT APPLICATION
+========================= */
 function submitApply(){
 
+let name = document.getElementById("applyName").value;
+let email = document.getElementById("applyEmail").value;
+let msg = document.getElementById("applyMsg").value;
+
+let applicants = JSON.parse(localStorage.getItem("applicants")) || [];
+
+applicants.push({
+name,
+email,
+position: selectedJob.title,
+message: msg,
+skills: selectedSkills
+});
+
+localStorage.setItem("applicants", JSON.stringify(applicants));
+
+/* NOTIFICATION FIX */
 let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
 
 notifications.push({
-email: getUserEmail(),
+email: email,
 message: "Applied for " + selectedJob.title,
 type: "Applied",
 date: new Date().toLocaleString()
@@ -191,42 +250,39 @@ date: new Date().toLocaleString()
 localStorage.setItem("notifications", JSON.stringify(notifications));
 
 alert("Application Sent!");
+
 showTab("notifications");
 renderNotifications();
 }
 
-/* =====================
-   NOTIFICATIONS FIX
-===================== */
+/* =========================
+   FIXED NOTIFICATIONS
+========================= */
 function renderNotifications(){
 
 let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
-let myEmail = getUserEmail();
 
 let myNotifs = notifications.filter(n =>
-(n.email || "").toLowerCase().trim() === myEmail
+(n.email || "").toLowerCase().trim() === userEmail
 );
 
-let box = document.getElementById("notifList");
-
-box.innerHTML =
+document.getElementById("notifList").innerHTML =
 myNotifs.length === 0
 ? "<p>No notifications yet</p>"
 : myNotifs.map(n=>`
 <div class="card">
-<b>${n.type}</b> - ${n.message}
-<br><small>${n.date}</small>
+<b>${n.type}:</b> ${n.message}<br>
+<small>${n.date}</small>
 </div>
 `).join("");
 }
 
-/* =====================
-   INIT
-===================== */
+/* AUTO UPDATE */
+setInterval(renderNotifications, 1500);
+
+/* INIT */
 renderJobs();
 renderNotifications();
-
-setInterval(renderNotifications, 1500);
 
 </script>
 

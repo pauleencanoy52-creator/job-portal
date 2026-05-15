@@ -55,7 +55,18 @@ padding:15px;
 border-radius:10px;
 margin-bottom:10px;
 box-shadow:0 5px 15px rgba(0,0,0,0.05);
+cursor:pointer;
 }
+
+button{
+background:#7b5cf0;
+color:#fff;
+border:none;
+padding:10px;
+border-radius:8px;
+cursor:pointer;
+}
+button:hover{opacity:0.9;}
 </style>
 </head>
 
@@ -77,11 +88,27 @@ box-shadow:0 5px 15px rgba(0,0,0,0.05);
 <!-- MAIN -->
 <div class="right">
 
+<!-- JOBS -->
 <div id="dashboard" class="section active">
 <h2>Available Jobs</h2>
 <div id="jobs"></div>
 </div>
 
+<!-- APPLY VIEW -->
+<div id="applyBox" class="section">
+<h2>Apply Job</h2>
+
+<h3 id="jobTitle"></h3>
+
+<input id="name" placeholder="Your Name">
+<input id="email" placeholder="Your Email">
+<textarea id="msg" placeholder="Message"></textarea>
+
+<button onclick="submitApply()">Submit Application</button>
+<button onclick="showTab('dashboard')" style="background:#17a2b8;">Back</button>
+</div>
+
+<!-- NOTIFICATIONS -->
 <div id="notifications" class="section">
 <h2>Notifications</h2>
 <div id="notifList"></div>
@@ -92,86 +119,114 @@ box-shadow:0 5px 15px rgba(0,0,0,0.05);
 
 <script>
 
-/* =========================
-   GET USER (FIXED SAFE)
-========================= */
+/* =====================
+   USER EMAIL
+===================== */
 function getUserEmail(){
-    let user = JSON.parse(localStorage.getItem("currentUser")) || {};
-    return (user.email || "").toLowerCase().trim();
+return (JSON.parse(localStorage.getItem("currentUser"))?.email || "").toLowerCase().trim();
 }
 
-/* =========================
-   TAB SWITCH
-========================= */
+/* =====================
+   TAB SYSTEM
+===================== */
 function showTab(tab){
 document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
 document.getElementById(tab).classList.add("active");
 renderNotifications();
 }
 
-/* =========================
+/* =====================
    LOGOUT
-========================= */
+===================== */
 function logout(){
 localStorage.removeItem("currentUser");
-window.location.href = "index.html";
+window.location.href="index.html";
 }
 
-/* =========================
-   JOBS
-========================= */
+/* =====================
+   CLICK JOB
+===================== */
+let selectedJob = null;
+
 function renderJobs(){
 let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
 
 document.getElementById("jobs").innerHTML =
 jobs.length === 0
 ? "<p>No jobs available</p>"
-: jobs.map(j=>`
-<div class="card">
+: jobs.map((j,i)=>`
+<div class="card" onclick="openJob(${i})">
 <h3>${j.title}</h3>
 <p>${j.company}</p>
 </div>
 `).join("");
 }
 
-/* =========================
-   FIXED NOTIFICATIONS
-========================= */
-function renderNotifications(){
+function openJob(i){
+let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+selectedJob = jobs[i];
+
+document.getElementById("jobTitle").innerText = selectedJob.title;
+
+document.getElementById("name").value = "";
+document.getElementById("email").value = getUserEmail();
+
+showTab("applyBox");
+}
+
+/* =====================
+   APPLY + NOTIF
+===================== */
+function submitApply(){
 
 let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
 
+notifications.push({
+email: getUserEmail(),
+message: "Applied for " + selectedJob.title,
+type: "Applied",
+date: new Date().toLocaleString()
+});
+
+localStorage.setItem("notifications", JSON.stringify(notifications));
+
+alert("Application Sent!");
+showTab("notifications");
+renderNotifications();
+}
+
+/* =====================
+   NOTIFICATIONS FIX
+===================== */
+function renderNotifications(){
+
+let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
 let myEmail = getUserEmail();
 
 let myNotifs = notifications.filter(n =>
-    (n.email || "").toLowerCase().trim() === myEmail
+(n.email || "").toLowerCase().trim() === myEmail
 );
 
 let box = document.getElementById("notifList");
 
-if(myNotifs.length === 0){
-box.innerHTML = "<p>No notifications yet</p>";
-return;
-}
-
-box.innerHTML = myNotifs.map(n=>`
+box.innerHTML =
+myNotifs.length === 0
+? "<p>No notifications yet</p>"
+: myNotifs.map(n=>`
 <div class="card">
-<p><b>${n.type || "Info"}:</b> ${n.message}</p>
-<small>${n.date || ""}</small>
+<b>${n.type}</b> - ${n.message}
+<br><small>${n.date}</small>
 </div>
 `).join("");
 }
 
-/* =========================
-   AUTO REFRESH (REALTIME)
-========================= */
-setInterval(renderNotifications, 1500);
-
-/* =========================
+/* =====================
    INIT
-========================= */
+===================== */
 renderJobs();
 renderNotifications();
+
+setInterval(renderNotifications, 1500);
 
 </script>
 

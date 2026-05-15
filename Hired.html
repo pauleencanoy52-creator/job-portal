@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hired Candidates</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+.container { display: flex; height: 100vh; }
+
+.left {
+    width: 25%;
+    min-width: 240px;
+    background: linear-gradient(135deg, #7b5cf0, #5a3ee6);
+    color: #fff;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.logo h2 { font-size: 24px; }
+.logo p { font-size: 13px; opacity: 0.9; }
+
+.menu {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.menu a {
+    color: #fff;
+    text-decoration: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    opacity: 0.85;
+    transition: 0.3s;
+}
+
+.menu a:hover {
+    background: rgba(255,255,255,0.15);
+}
+
+.menu a.active {
+    background: rgba(255,255,255,0.25);
+    font-weight: 600;
+}
+
+.menu-logout {
+    margin-top: 10px;
+}
+
+.right {
+    flex: 1;
+    background: #f7f7ff;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.card {
+    margin-top: 25px;
+    background: #fff;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.hired {
+    border: 1px solid #eee;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.badge {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    background: #d4edda;
+    color: #155724;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- SIDEBAR -->
+<div class="left">
+    <div>
+        <div class="logo">
+            <h2>Job Portal</h2>
+            <p>Admin Panel</p>
+        </div>
+
+        <div class="menu">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="job-post.html">Post Job</a>
+            <a href="applicants.html">Applicants</a>
+            <a href="interviews.html">Interviews</a>
+            <a href="hired.html" class="active">Hired</a>
+
+            <a href="#" class="menu-logout" onclick="logout()">Logout</a>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN -->
+<div class="right">
+
+<div class="header">
+    <h1>Hired Candidates</h1>
+</div>
+
+<div class="card">
+    <div id="hiredList"></div>
+</div>
+
+</div>
+</div>
+
+<script>
+
+// LOGOUT
+function logout(){
+    localStorage.removeItem("isLoggedIn");
+    window.location.href = "Login.html";
+}
+
+// LOAD DATA FROM STORAGE
+let hired = JSON.parse(localStorage.getItem("hired")) || [];
+
+// RENDER
+function renderHired(){
+
+    let container = document.getElementById("hiredList");
+
+    if(hired.length === 0){
+        container.innerHTML = "<p>No hired candidates yet.</p>";
+        return;
+    }
+
+    container.innerHTML = hired.map((a, index) => `
+        <div class="hired">
+            <h3>${a.name}</h3>
+            <p><strong>Position:</strong> ${a.position}</p>
+            <p><strong>Email:</strong> ${a.email || "N/A"}</p>
+
+            <span class="badge">Hired</span>
+
+            <br><br>
+            <button onclick="removeHired(${index})"
+                style="background:red;color:#fff;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;">
+                Remove
+            </button>
+        </div>
+    `).join("");
+}
+
+// REMOVE + SAVE
+function removeHired(index){
+    hired.splice(index, 1);
+    localStorage.setItem("hired", JSON.stringify(hired));
+    renderHired();
+}
+
+renderHired();
+
+</script>
+
+</body>
+</html>

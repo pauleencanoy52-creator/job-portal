@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* SIDEBAR */
+.left {
+    width: 25%;
+    min-width: 240px;
+    background: linear-gradient(135deg, #7b5cf0, #5a3ee6);
+    color: #fff;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.logo h2 { font-size: 24px; margin-bottom: 5px; }
+.logo p { font-size: 13px; opacity: 0.9; }
+
+.menu {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 15px;
+    border-radius: 10px;
+    font-size: 14px;
+    opacity: 0.85;
+    transition: 0.3s;
+}
+
+.menu a:hover {
+    background: rgba(255,255,255,0.15);
+    opacity: 1;
+    transform: translateX(5px);
+}
+
+.menu a.active {
+    background: rgba(255,255,255,0.25);
+    font-weight: 600;
+}
+
+.menu-logout {
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 15px;
+    border-radius: 10px;
+    font-size: 14px;
+    opacity: 0.85;
+    transition: 0.3s;
+    display: block;
+    margin-top: 10px;
+}
+
+.menu-logout:hover {
+    background: rgba(255,255,255,0.15);
+    opacity: 1;
+    transform: translateX(5px);
+}
+
+/* MAIN */
+.right {
+    flex: 1;
+    background: #f5f6fa;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 { color: #333; }
+
+.card {
+    margin-top: 25px;
+    background: #e9e9ec;
+    padding: 25px;
+    border-radius: 20px;
+}
+
+.stats {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.stat-box {
+    flex: 1;
+    min-width: 180px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.stat-box h2 { color: #5a3ee6; }
+/* JOB LIST */
+.job-list{
+    margin-top:30px;
+}
+
+.job-header{
+    margin-bottom:15px;
+}
+
+.job-header h2{
+    color:#333;
+    font-size:22px;
+}
+
+.job-item{
+    background:#fff;
+    padding:18px;
+    border-radius:15px;
+    margin-bottom:15px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    transition:0.3s;
+}
+
+.job-item:hover{
+    transform:translateY(-3px);
+    box-shadow:0 5px 15px rgba(0,0,0,0.08);
+}
+
+.job-info h3{
+    color:#5a3ee6;
+    margin-bottom:5px;
+}
+
+.job-info p{
+    color:#777;
+    font-size:14px;
+}
+
+.job-date{
+    font-size:13px;
+    color:#999;
+}
+
+.empty{
+    background:#fff;
+    padding:20px;
+    border-radius:15px;
+    text-align:center;
+    color:#888;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <div class="left">
+        <div>
+            <div class="logo">
+                <h2>Job Portal</h2>
+                <p>Admin Panel 👋</p>
+            </div>
+
+            <div class="menu">
+                <a href="dashboard.html" class="active">Dashboard</a>
+                <a href="job-post.html">Post Job</a>
+                <a href="applicants.html">Applicants</a>
+                <a href="interviews.html">Interviews</a>
+                <a href="hired.html">Hired</a>
+
+                <a href="#" class="menu-logout" onclick="logout()">Logout</a>
+            </div>
+        </div>
+
+        <p class="footer">© 2026 Job Portal System</p>
+    </div>
+
+    <!-- MAIN -->
+    <div class="right">
+
+        <div class="header">
+            <h1>Dashboard</h1>
+            <span>Hello, Admin!</span>
+        </div>
+
+        <div class="card">
+
+    <div class="stats">
+
+        <div class="stat-box">
+            <h2 id="totalJobs">0</h2>
+            <p>Post Job</p>
+        </div>
+
+        <div class="stat-box">
+            <h2 id="totalApplicants">0</h2>
+            <p>Applicants</p>
+        </div>
+
+        <div class="stat-box">
+            <h2 id="totalInterviews">0</h2>
+            <p>Interviews</p>
+        </div>
+
+        <div class="stat-box">
+            <h2 id="totalHired">0</h2>
+            <p>Hired</p>
+        </div>
+
+    </div>
+
+    <!-- JOB LIST -->
+    <div class="job-list">
+
+        <div class="job-header">
+            <h2>Recent Posted Jobs</h2>
+        </div>
+
+        <div id="jobContainer">
+
+            <div class="empty">
+                No jobs posted yet
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+</div>
+
+<script>
+
+// LOGOUT
+function logout(){
+    localStorage.removeItem("isLoggedIn");
+    window.location.href = "Login.html";
+}
+
+// SAFE PARSE FUNCTION (IMPORTANT FIX)
+function getData(key) {
+    try {
+        return JSON.parse(localStorage.getItem(key)) || [];
+    } catch (e) {
+        return [];
+    }
+}
+
+// LOAD DATA
+function loadData() {
+
+    let jobs = getData("jobs");
+    let applicants = getData("applicants");
+    let interviews = getData("interviews");
+    let hired = getData("hired");
+
+    // SAFETY FIX
+    if (!Array.isArray(jobs)) jobs = [];
+    if (!Array.isArray(applicants)) applicants = [];
+    if (!Array.isArray(interviews)) interviews = [];
+    if (!Array.isArray(hired)) hired = [];
+
+    // COUNTS
+    document.getElementById("totalJobs").innerText = jobs.length;
+    document.getElementById("totalApplicants").innerText = applicants.length;
+    document.getElementById("totalInterviews").innerText = interviews.length;
+    document.getElementById("totalHired").innerText = hired.length;
+
+    // JOB LIST
+    const jobContainer = document.getElementById("jobContainer");
+
+    if(jobs.length === 0){
+
+        jobContainer.innerHTML = `
+            <div class="empty">
+                No jobs posted yet
+            </div>
+        `;
+
+        return;
+    }
+
+    jobContainer.innerHTML = "";
+
+    jobs.forEach((job, index) => {
+
+    jobContainer.innerHTML += `
+
+        <div class="job-item">
+
+            <div class="job-info">
+
+                <h3>${job.title || "Untitled Job"}</h3>
+
+                <p>
+                    ${job.company || "No Company"} • 
+                    
+                </p>
+
+                <div class="job-description">
+                    ${job.description || "No description available"}
+                </div>
+
+            </div>
+
+            <div class="job-date">
+                ${job.date || "Recently"}
+            </div>
+
+        </div>
+
+    `;
+
+});
+}
+
+setInterval(loadData, 2000);
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post a Job</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* SIDEBAR */
+.left {
+    width: 25%;
+    min-width: 240px;
+    background: linear-gradient(135deg, #7b5cf0, #5a3ee6);
+    color: #fff;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.logo h2 { font-size: 24px; margin-bottom: 5px; }
+.logo p { font-size: 13px; opacity: 0.9; }
+
+.menu {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.menu a {
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 15px;
+    border-radius: 10px;
+    font-size: 14px;
+    opacity: 0.85;
+    transition: 0.3s;
+}
+
+.menu a:hover {
+    background: rgba(255,255,255,0.15);
+    opacity: 1;
+    transform: translateX(5px);
+}
+
+.menu a.active {
+    background: rgba(255,255,255,0.25);
+    font-weight: 600;
+}
+
+/* LOGOUT STYLE */
+.menu-logout {
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 15px;
+    border-radius: 10px;
+    font-size: 14px;
+    opacity: 0.85;
+    transition: 0.3s;
+    display: block;
+    margin-top: 10px;
+}
+
+.menu-logout:hover {
+    background: rgba(255,255,255,0.15);
+    opacity: 1;
+    transform: translateX(5px);
+}
+
+.footer {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* MAIN */
+.right {
+    flex: 1;
+    background: #f7f7ff;
+    padding: 40px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    color: #333;
+}
+
+.card {
+    margin-top: 25px;
+    background: #fff;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+textarea {
+    height: 120px;
+    resize: none;
+}
+
+.btn {
+    background: #7b5cf0;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #5a3ee6;
+}
+
+/* JOB LISTING */
+.job-listing {
+    margin-top: 30px;
+    padding: 15px;
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.job-item {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.job-item button {
+    background: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.job-item button:hover {
+    background: #e53935;
+}
+
+.job-item p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.toggle-btns {
+    margin-bottom: 20px;
+}
+
+.toggle-btns button {
+    background: #7b5cf0;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.toggle-btns button:hover {
+    background: #5a3ee6;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <div class="left">
+        <div>
+            <div class="logo">
+                <h2>Job Portal</h2>
+                <p>Admin Panel 👋</p>
+            </div>
+
+            <div class="menu">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="job-post.html" class="active">Post Job</a>
+                <a href="applicants.html">Applicants</a>
+                <a href="interviews.html">Interviews</a>
+                <a href="hired.html">Hired</a>
+
+                <!-- LOGOUT -->
+                <a href="#" class="menu-logout" onclick="logout()">Logout</a>
+            </div>
+        </div>
+
+        <p class="footer">© 2026 Job Portal System</p>
+    </div>
+
+    <!-- MAIN -->
+    <div class="right">
+
+        <div class="header">
+            <h1>Post a Job</h1>
+            <span>Hello, Admin!</span>
+        </div>
+
+        <!-- Toggle Buttons for Post/View Jobs -->
+        <div class="toggle-btns">
+            <button onclick="showPostForm()">Post a New Job</button>
+            <button onclick="showJobsList()">View Posted Jobs</button>
+        </div>
+
+        <!-- Job Post Form (Initially Visible) -->
+        <div id="postFormSection" class="card">
+            <form id="jobForm">
+
+                <label>Job Title</label>
+                <input type="text" id="title" required>
+
+                <label>Company</label>
+                <input type="text" id="company" required>
+
+                <label>Job Type</label>
+                <select id="type">
+                    <option>Full Time</option>
+                    <option>Part Time</option>
+                    <option>Internship</option>
+                </select>
+
+                <label>Job Description</label>
+                <textarea id="description" placeholder="Job Description"></textarea>
+                <label>Required Skills</label>
+                <input type="text" id="skills" placeholder="HTML, CSS, JavaScript">
+                <button type="submit" class="btn">Post Job</button>
+
+            </form>
+        </div>
+
+        <!-- Job Listing Section (Initially Hidden) -->
+        <div id="jobsListSection" class="job-listing" style="display: none;">
+            <h3>Jobs You’ve Posted</h3>
+            <!-- Job items will be dynamically displayed here -->
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+// LOGOUT
+function logout(){
+    localStorage.removeItem("isLoggedIn");
+    window.location.href = "Login.html";
+}
+
+// POST JOB
+document.getElementById("jobForm").addEventListener("submit", function(e){
+    e.preventDefault();
+
+   const job = {
+    id: Date.now(),
+    title: document.getElementById("title").value,
+    company: document.getElementById("company").value,
+    type: document.getElementById("type").value,
+
+    // ✅ FIXED LINE
+    description: document.getElementById("description").value,
+
+    skills: document.getElementById("skills").value
+        .split(",")
+        .map(s => s.trim().toLowerCase())
+};
+    // ✅ ADDED ONLY THIS
+    skills: document.getElementById("skills").value
+        .split(",")
+        .map(s => s.trim().toLowerCase())
+
+
+    let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+    jobs.push(job);
+    localStorage.setItem("jobs", JSON.stringify(jobs));
+
+    alert("Job Posted Successfully!");
+
+    this.reset();
+
+    setTimeout(() => {
+        loadJobs();  // Reload jobs
+    }, 300);
+});
+
+// Load Jobs from LocalStorage and Display
+function loadJobs() {
+    const jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+    const jobsList = document.getElementById("jobsListSection");
+
+    jobsList.innerHTML = '<h3>Jobs You’ve Posted</h3>';  // Reset the job list header
+
+    if (jobs.length === 0) {
+        jobsList.innerHTML += '<p>No jobs posted yet.</p>';
+        return;
+    }
+
+    jobs.forEach(job => {
+        const jobItem = document.createElement('div');
+        jobItem.classList.add('job-item');
+        
+        jobItem.innerHTML = `
+            <div>
+                <p><strong>Job Title:</strong> ${job.title}</p>
+                <p><strong>Company:</strong> ${job.company}</p>
+                <p><strong>Job Type:</strong> ${job.type}</p>
+                <p><strong>Job Description:</strong> ${job.desc}</p>
+                <p><strong>Skills:</strong> ${(job.skills || []).join(", ")}</p>
+            </div>
+            <button onclick="deleteJob(${job.id})">Delete</button>
+        `;
+
+        jobsList.appendChild(jobItem);
+    });
+}
+
+// Delete Job from LocalStorage
+function deleteJob(jobId) {
+    let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+    jobs = jobs.filter(job => job.id !== jobId);  // Filter out the job to be deleted
+    localStorage.setItem("jobs", JSON.stringify(jobs));
+
+    loadJobs();  // Reload the job list after deletion
+}
+
+// Show Post Job Form
+function showPostForm() {
+    document.getElementById("postFormSection").style.display = "block";
+    document.getElementById("jobsListSection").style.display = "none";
+}
+
+// Show Jobs List
+function showJobsList() {
+    document.getElementById("postFormSection").style.display = "none";
+    document.getElementById("jobsListSection").style.display = "block";
+    loadJobs();  // Load jobs when switching to view section
+}
+
+// Initial Load: Show Post Form
+showPostForm();
+
+</script>
+
+</body>
+</html>

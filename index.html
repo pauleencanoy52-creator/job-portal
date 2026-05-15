@@ -63,42 +63,56 @@ from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 const firebaseConfig = {
   apiKey: "AIzaSyAtFG9KPZgfZRGh8GlOI-hNHSXdI2IMuTw",
   authDomain: "job-portal-847bb.firebaseapp.com",
-  projectId: "job-portal-847bb"
+  projectId: "job-portal-847bb",
+  storageBucket: "job-portal-847bb.firebasestorage.app",
+  messagingSenderId: "463078712629",
+  appId: "1:463078712629:web:38a5efbdb9b9e6538b987c",
+  measurementId: "G-JZXSRYJLQ4"
 };
 
+// INIT FIREBASE
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-window.login = async function(){
+// LOGIN FUNCTION
+window.login = async function(e){
 
-let email = document.getElementById("email").value.toLowerCase();
-let password = document.getElementById("password").value;
+    e.preventDefault();
 
-try{
+    let email = document.getElementById("username").value.toLowerCase();
+    let password = document.getElementById("password").value;
 
-const userCredential =
-await signInWithEmailAndPassword(auth, email, password);
+    // ONLY GMAIL ALLOWED
+    if (!email.endsWith("@gmail.com")) {
+        alert("Only @gmail.com emails are allowed.");
+        return;
+    }
 
-const user = userCredential.user;
+    try {
 
-/* 🔥 IMPORTANT FIX: SAVE USER FOR DASHBOARD */
-localStorage.setItem("currentUser", JSON.stringify({
-    email: user.email,
-    name: user.email.split("@")[0]
-}));
+        const userCredential =
+            await signInWithEmailAndPassword(auth, email, password);
 
-alert("Login success!");
+        const user = userCredential.user;
 
-if(user.email === "admin@gmail.com"){
-    window.location = "dashboard.html";
-}else{
-    window.location = "user-dashboard.html";
-}
+        // 🔥 IMPORTANT FIX (ADD THIS ONLY)
+        localStorage.setItem("currentUser", JSON.stringify({
+            email: user.email.toLowerCase(),
+            name: user.email.split("@")[0]
+        }));
 
-}catch(err){
-alert(err.message);
-}
+        alert("Login Successful!");
 
+        // ADMIN CHECK
+        if(user.email === "admin@gmail.com"){
+            window.location = "dashboard.html";
+        } else {
+            window.location = "user-dashboard.html";
+        }
+
+    } catch(err) {
+        alert(err.message);
+    }
 }
 
 </script>

@@ -8,28 +8,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Inter;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter;}
 
-body{
-background:#f5f6fa;
-}
+.container{display:flex;height:100vh;}
 
-.container{
-display:flex;
-min-height:100vh;
-}
-
-/* SIDEBAR */
 .left{
-width:250px;
+width:25%;
+min-width:240px;
 background:linear-gradient(135deg,#7b5cf0,#5a3ee6);
 color:#fff;
-padding:25px;
+padding:30px;
+display:flex;
+flex-direction:column;
 }
 
 .menu{
@@ -42,71 +32,29 @@ margin-top:30px;
 .menu a{
 color:#fff;
 text-decoration:none;
-padding:12px;
+padding:12px 15px;
 border-radius:10px;
 cursor:pointer;
-opacity:0.9;
+opacity:0.85;
 }
+.menu a:hover{background:rgba(255,255,255,0.15);}
 
-.menu a:hover{
-background:rgba(255,255,255,0.15);
-}
-
-/* MAIN */
 .right{
 flex:1;
-padding:30px;
+background:#f5f6fa;
+padding:40px;
+overflow-y:auto;
 }
 
 .section{display:none;}
 .section.active{display:block;}
 
-/* CARD */
 .card{
 background:#fff;
 padding:15px;
 border-radius:10px;
 margin-bottom:10px;
 box-shadow:0 5px 15px rgba(0,0,0,0.05);
-}
-
-/* INPUT */
-input,textarea{
-width:100%;
-padding:8px;
-margin:5px 0;
-border:1px solid #ddd;
-border-radius:6px;
-}
-
-/* BUTTON */
-button{
-background:#7b5cf0;
-color:#fff;
-border:none;
-padding:8px 12px;
-border-radius:6px;
-cursor:pointer;
-}
-
-button:hover{
-background:#5a3ee6;
-}
-
-/* SKILLS */
-.skill-box{
-display:flex;
-flex-wrap:wrap;
-gap:8px;
-}
-
-.skill-box label{
-background:#fff;
-border:1px solid #ddd;
-padding:6px 10px;
-border-radius:6px;
-cursor:pointer;
-font-size:14px;
 }
 </style>
 </head>
@@ -117,56 +65,29 @@ font-size:14px;
 
 <!-- SIDEBAR -->
 <div class="left">
+<div>
 <h2>User Panel</h2>
 
 <div class="menu">
 <a onclick="showTab('dashboard')">Jobs</a>
 <a onclick="showTab('notifications')">Notifications</a>
-<a onclick="showTab('profile')">Profile</a>
 <a onclick="logout()">Logout</a>
+</div>
+
 </div>
 </div>
 
 <!-- MAIN -->
 <div class="right">
 
-<!-- JOBS -->
 <div id="dashboard" class="section active">
 <h2>Available Jobs</h2>
 <div id="jobs"></div>
 </div>
 
-<!-- NOTIFICATIONS -->
 <div id="notifications" class="section">
 <h2>Notifications</h2>
 <div id="notifList"></div>
-</div>
-
-<!-- PROFILE -->
-<div id="profile" class="section">
-<h2>Profile</h2>
-
-<input id="pname" placeholder="Full Name">
-<input id="pemail" placeholder="Email">
-<input id="pphone" placeholder="Phone">
-
-<button onclick="saveProfile()">Save Profile</button>
-</div>
-
-<!-- APPLY -->
-<div id="applyBox" class="section">
-<h2>Apply Job</h2>
-
-<h3 id="jobTitle"></h3>
-
-<div id="skillApplyBox" class="skill-box"></div>
-
-<input id="applyName" placeholder="Name">
-<input id="applyEmail" placeholder="Email">
-<textarea id="applyMsg" placeholder="Message"></textarea>
-
-<button onclick="submitApply()">Submit Application</button>
-<button onclick="goBack()">Back</button>
 </div>
 
 </div>
@@ -175,157 +96,63 @@ font-size:14px;
 <script>
 
 let currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
-currentUser.email = (currentUser.email || "").toLowerCase().trim();
-
-let selectedJob = null;
-let selectedSkills = [];
+let email = (currentUser.email || "").toLowerCase().trim();
 
 /* TAB */
 function showTab(tab){
 document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
 document.getElementById(tab).classList.add("active");
-
-if(tab === "notifications") renderNotifications();
+renderNotifications();
 }
 
 /* LOGOUT */
 function logout(){
 localStorage.removeItem("currentUser");
-window.location.href = "index.html";
+location.href="index.html";
 }
 
 /* JOBS */
 function renderJobs(){
 let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
-
 document.getElementById("jobs").innerHTML =
-jobs.map((j,i)=>`
-<div class="card" onclick="selectJob(${i})">
+jobs.length === 0
+? "<p>No jobs</p>"
+: jobs.map(j=>`
+<div class="card">
 <h3>${j.title}</h3>
 <p>${j.company}</p>
 </div>
 `).join("");
 }
 
-/* SELECT JOB */
-function selectJob(i){
-let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
-selectedJob = jobs[i];
-
-selectedSkills = [];
-
-document.getElementById("jobTitle").innerText = selectedJob.title;
-
-document.getElementById("applyName").value = currentUser.name || "";
-document.getElementById("applyEmail").value = currentUser.email || "";
-document.getElementById("applyMsg").value = "";
-
-renderSkills();
-showTab("applyBox");
-}
-
-/* SKILLS */
-function renderSkills(){
-let skills = selectedJob.skills || ["HTML","CSS","JS"];
-
-document.getElementById("skillApplyBox").innerHTML =
-skills.map(s=>`
-<label>
-<input type="checkbox" value="${s}" onchange="toggleSkill(this)">
-${s}
-</label>
-`).join("");
-}
-
-function toggleSkill(el){
-if(el.checked){
-selectedSkills.push(el.value);
-}else{
-selectedSkills = selectedSkills.filter(x=>x!==el.value);
-}
-}
-
-/* APPLY + FIXED NOTIFICATION */
-function submitApply(){
-
-let name = applyName.value;
-let email = applyEmail.value.toLowerCase().trim();
-let msg = applyMsg.value;
-
-if(!name || !email || !msg){
-alert("Fill all fields!");
-return;
-}
-
-let applicants = JSON.parse(localStorage.getItem("applicants")) || [];
-let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
-
-if(!Array.isArray(notifications)) notifications = [];
-
-applicants.push({
-name,
-email,
-position:selectedJob.title,
-skills:selectedSkills,
-status:"Applied"
-});
-
-notifications.push({
-email: email,
-message:"Applied for " + selectedJob.title,
-type:"Applied",
-date:new Date().toLocaleString()
-});
-
-localStorage.setItem("applicants",JSON.stringify(applicants));
-localStorage.setItem("notifications",JSON.stringify(notifications));
-
-alert("Application Sent!");
-
-showTab("notifications");
-renderNotifications();
-}
-
-/* 🔥 FIXED NOTIFICATIONS (NO BLANK ISSUE) */
+/* 🔥 FIXED NOTIFICATIONS */
 function renderNotifications(){
 
 let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
-if(!Array.isArray(notifications)) notifications = [];
 
-let myEmail = (currentUser.email || "").toLowerCase().trim();
-
+/* IMPORTANT FIX: safe compare */
 let myNotifs = notifications.filter(n =>
-(n.email || "").toLowerCase().trim() === myEmail
+(n.email || "").toLowerCase().trim() === email
 );
 
-document.getElementById("notifList").innerHTML =
-myNotifs.length === 0
-? "<p>No notifications yet</p>"
-: myNotifs.map(n=>`
+let container = document.getElementById("notifList");
+
+if(myNotifs.length === 0){
+container.innerHTML = "<p>No notifications</p>";
+return;
+}
+
+container.innerHTML = myNotifs.map(n=>`
 <div class="card">
-<p>${n.message}</p>
-<small>${n.date}</small>
+<p><b>${n.type || "Info"}:</b> ${n.message}</p>
+<small>${n.date || ""}</small>
 </div>
 `).join("");
 }
 
 /* AUTO SYNC */
-setInterval(renderNotifications,2000);
+setInterval(renderNotifications, 1500);
 
-/* PROFILE */
-function saveProfile(){
-currentUser = {
-name:pname.value,
-email:pemail.value.toLowerCase().trim(),
-phone:pphone.value
-};
-
-localStorage.setItem("currentUser",JSON.stringify(currentUser));
-
-alert("Profile Saved!");
-}
-
-/* INIT */
 renderJobs();
 renderNotifications();
 

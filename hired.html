@@ -1,17 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hired</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+    --primary:#7b5cf0;
+    --secondary:#5a3ee6;
+    --bg:#f5f6fa;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter', sans-serif;
+}
+
+body{
+    background:var(--bg);
+}
+
+.container{
+    display:flex;
+    min-height:100vh;
+}
+
+/* SIDEBAR */
+.left{
+    width:250px;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    color:#fff;
+    padding:25px;
+    display:flex;
+    flex-direction:column;
+}
+
+.left h2{ font-size:22px; }
+
+.menu{
+    margin-top:30px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.menu a{
+    color:#fff;
+    text-decoration:none;
+    padding:12px;
+    border-radius:10px;
+}
+
+.menu a:hover{
+    background:rgba(255,255,255,0.15);
+}
+
+.menu a.active{
+    background:rgba(255,255,255,0.25);
+}
+
+/* MAIN */
+.right{
+    flex:1;
+    padding:30px;
+}
+
+.card{
+    background:#fff;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.05);
+    margin-top:20px;
+}
+
+/* HIRED CARD */
+.hired{
+    background:#fff;
+    padding:18px;
+    border-radius:12px;
+    margin-bottom:12px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+
+.hired h3{
+    color:var(--primary);
+}
+
+.hired p{
+    color:#777;
+    font-size:14px;
+}
+
+.badge{
+    display:inline-block;
+    margin-top:8px;
+    padding:4px 10px;
+    border-radius:20px;
+    font-size:12px;
+    background:#d4edda;
+    color:#155724;
+}
+
+/* BUTTON */
+button{
+    background:#dc3545;
+    color:#fff;
+    border:none;
+    padding:8px 12px;
+    border-radius:8px;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+button:hover{
+    opacity:0.9;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- SIDEBAR -->
+<div class="left">
+    <div>
+        <h2>Job Portal</h2>
+
+        <div class="menu">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="job-post.html">Post Job</a>
+            <a href="applicants.html">Applicants</a>
+            <a href="interviews.html">Interviews</a>
+            <a href="hired.html" class="active">Hired</a>
+
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN -->
+<div class="right">
+
+<h1>Hired Candidates</h1>
+
+<div class="card" id="hiredList">Loading...</div>
+
+</div>
+</div>
+
 <script>
 
-// LOGOUT (FIXED CASE)
+// 🚪 LOGOUT
 function logout(){
-    localStorage.removeItem("isLoggedIn");
     window.location.href = "index.html";
 }
 
-// LOAD DATA
+// 📦 LOAD
 function getHired(){
     return JSON.parse(localStorage.getItem("hired")) || [];
 }
 
-// RENDER
+// 🎯 RENDER
 function renderHired(){
 
     let hired = getHired();
@@ -26,15 +182,14 @@ function renderHired(){
         <div class="hired">
 
             <h3>${a?.name || "N/A"}</h3>
-            <p><strong>Position:</strong> ${a?.position || "N/A"}</p>
-            <p><strong>Email:</strong> ${a?.email || "N/A"}</p>
+            <p><b>Position:</b> ${a?.position || "N/A"}</p>
+            <p><b>Email:</b> ${a?.email || "N/A"}</p>
 
             <span class="badge">Hired</span>
 
-            <br><br>
+            <br>
 
-            <button onclick="removeHired(${index})"
-                style="background:red;color:#fff;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;">
+            <button onclick="removeHired(${index})">
                 Remove
             </button>
 
@@ -42,7 +197,7 @@ function renderHired(){
     `).join("");
 }
 
-// REMOVE
+// 🗑 REMOVE
 function removeHired(index){
     let hired = getHired();
     hired.splice(index, 1);
@@ -50,10 +205,11 @@ function removeHired(index){
     renderHired();
 }
 
-// AUTO SYNC (IMPORTANT FIX)
+// 🔄 AUTO REFRESH
 setInterval(renderHired, 2000);
-
-// INIT
 renderHired();
 
 </script>
+
+</body>
+</html>

@@ -12,16 +12,11 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
+    font-family: Inter;
 }
 
-/* LAYOUT (same as dashboard) */
-.container {
-    display: flex;
-    height: 100vh;
-}
+.container { display: flex; height: 100vh; }
 
-/* SIDEBAR */
 .left {
     width: 25%;
     min-width: 240px;
@@ -31,15 +26,6 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-}
-
-.logo h2 {
-    font-size: 24px;
-}
-
-.logo p {
-    font-size: 13px;
-    opacity: 0.9;
 }
 
 .menu {
@@ -54,46 +40,24 @@
     text-decoration: none;
     padding: 12px 15px;
     border-radius: 10px;
-    font-size: 14px;
     opacity: 0.85;
-    transition: 0.3s;
 }
 
 .menu a:hover {
     background: rgba(255,255,255,0.15);
-    opacity: 1;
-    transform: translateX(5px);
 }
 
-.menu a.active {
-    background: rgba(255,255,255,0.25);
-    font-weight: 600;
-}
-
-.footer {
-    font-size: 12px;
-    opacity: 0.8;
-}
-
-/* MAIN */
 .right {
     flex: 1;
     background: #f7f7ff;
     padding: 40px;
 }
 
-/* HEADER (same as dashboard) */
 .header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
 }
 
-.header h1 {
-    color: #333;
-}
-
-/* CARD (same style) */
 .card-box {
     margin-top: 25px;
     background: #fff;
@@ -102,23 +66,11 @@
     box-shadow: 0 10px 25px rgba(0,0,0,0.08);
 }
 
-/* INFO */
-.info {
-    margin-bottom: 15px;
-}
-
-.info h3 {
-    color: #333;
-    margin-bottom: 5px;
-}
-
 .info p {
-    font-size: 14px;
-    color: #666;
-    margin: 3px 0;
+    margin: 6px 0;
+    color: #555;
 }
 
-/* BUTTONS */
 .btn-group {
     margin-top: 20px;
     display: flex;
@@ -130,16 +82,14 @@
     padding: 10px 15px;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 14px;
 }
 
 .accept { background:#28a745; color:#fff; }
 .reject { background:#dc3545; color:#fff; }
 .back { background:#7b5cf0; color:#fff; }
 
-.btn:hover {
-    opacity: 0.85;
-}
+.btn:hover { opacity: 0.85; }
+
 </style>
 </head>
 
@@ -147,80 +97,96 @@
 
 <div class="container">
 
-    <!-- SIDEBAR (same as dashboard) -->
-    <div class="left">
-        <div>
-            <div class="logo">
-                <h2>Job Portal</h2>
-                <p>Admin Panel 👋</p>
-            </div>
+<!-- SIDEBAR -->
+<div class="left">
+<div>
+<h2>Job Portal</h2>
 
-            <div class="menu">
-                <a href="dashboard.html">Dashboard</a>
-                <a href="job-post.html">Post Job</a>
-                <a href="applicants.html" class="active">Applicants</a>
-                <a href="interviews.html">Interviews</a>
-                <a href="hired.html">Hired</a>
-            </div>
-        </div>
-
-        <p class="footer">© 2026 Job Portal System</p>
-    </div>
-
-    <!-- MAIN -->
-    <div class="right">
-
-        <div class="header">
-            <h1>Applicant Details</h1>
-            <span>Hello, Admin!</span>
-        </div>
-
-        <!-- CARD -->
-        <div class="card-box">
-
-            
-
-           <div class="btn-group">
-    <button class="btn accept" onclick="acceptApplicant()">Accept</button>
-    <button class="btn reject" onclick="rejectApplicant()">Reject</button>
-    <button class="btn back" onclick="window.location.href='applicants.html'">Back</button>
+<div class="menu">
+<a href="dashboard.html">Dashboard</a>
+<a href="job-post.html">Post Job</a>
+<a href="applicants.html">Applicants</a>
+<a href="interviews.html">Interviews</a>
+<a href="hired.html">Hired</a>
 </div>
 
-        </div>
+</div>
+</div>
 
-    </div>
+<!-- MAIN -->
+<div class="right">
+
+<div class="header">
+<h1>Applicant Details</h1>
+<span>Admin Panel</span>
+</div>
+
+<div class="card-box">
+
+<div class="info">
+<h3 id="name"></h3>
+<p><b>Email:</b> <span id="email"></span></p>
+<p><b>Position:</b> <span id="position"></span></p>
+<p><b>Message:</b> <span id="message"></span></p>
+<p><b>Skills:</b> <span id="skills"></span></p>
+</div>
+
+<div class="btn-group">
+<button class="btn accept" onclick="acceptApplicant()">Accept</button>
+<button class="btn reject" onclick="rejectApplicant()">Reject</button>
+<button class="btn back" onclick="window.location.href='applicants.html'">Back</button>
+</div>
 
 </div>
+
+</div>
+
+</div>
+
 <script>
+
 let applicant = JSON.parse(localStorage.getItem("selectedApplicant"));
 let applicants = JSON.parse(localStorage.getItem("applicants")) || [];
 let interviews = JSON.parse(localStorage.getItem("interviews")) || [];
 
-// if no selected applicant
 if (!applicant) {
     alert("No applicant selected!");
     window.location.href = "applicants.html";
 }
 
-// ACCEPT → move to interviews page
+/* SHOW DATA */
+document.getElementById("name").innerText = applicant.name || "";
+document.getElementById("email").innerText = applicant.email || "";
+document.getElementById("position").innerText = applicant.position || "";
+document.getElementById("message").innerText = applicant.message || "";
+document.getElementById("skills").innerText = (applicant.skills || []).join(", ");
+
+/* ACCEPT */
 function acceptApplicant() {
+
     interviews.push(applicant);
     localStorage.setItem("interviews", JSON.stringify(interviews));
 
-    // remove from applicants list
     applicants = applicants.filter(a => a.email !== applicant.email);
     localStorage.setItem("applicants", JSON.stringify(applicants));
+
+    localStorage.removeItem("selectedApplicant");
 
     window.location.href = "interviews.html";
 }
 
-// REJECT → just remove
+/* REJECT */
 function rejectApplicant() {
+
     applicants = applicants.filter(a => a.email !== applicant.email);
     localStorage.setItem("applicants", JSON.stringify(applicants));
 
+    localStorage.removeItem("selectedApplicant");
+
     window.location.href = "applicants.html";
 }
+
 </script>
+
 </body>
 </html>

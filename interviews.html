@@ -1,407 +1,158 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interviews</title>
+<script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+function logout(){
+    localStorage.removeItem("isLoggedIn");
+    window.location.href = "login.html"; // FIXED (lowercase)
+}
 
-    <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Inter', sans-serif;
-    }
+let interviews = JSON.parse(localStorage.getItem("interviews")) || [];
+let hired = JSON.parse(localStorage.getItem("hired")) || [];
+let rejected = JSON.parse(localStorage.getItem("rejected")) || [];
 
-    .container {
-        display: flex;
-        height: 100vh;
-    }
+function renderInterviews(){
 
-    /* SIDEBAR */
-    .left {
-        width: 25%;
-        min-width: 240px;
-        background: linear-gradient(135deg, #7b5cf0, #5a3ee6);
-        color: #fff;
-        padding: 30px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .logo h2 { font-size: 24px; margin-bottom: 5px; }
-    .logo p { font-size: 13px; opacity: 0.9; }
-
-    .menu {
-        margin-top: 30px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .menu a {
-        color: #fff;
-        text-decoration: none;
-        padding: 12px 15px;
-        border-radius: 10px;
-        font-size: 14px;
-        opacity: 0.85;
-        transition: 0.3s;
-    }
-
-    .menu a:hover {
-        background: rgba(255,255,255,0.15);
-        opacity: 1;
-        transform: translateX(5px);
-    }
-
-    .menu a.active {
-        background: rgba(255,255,255,0.25);
-        font-weight: 600;
-    }
-
-    /* LOGOUT */
-    .menu-logout {
-        color: #fff;
-        text-decoration: none;
-        padding: 12px 15px;
-        border-radius: 10px;
-        font-size: 14px;
-        opacity: 0.85;
-        transition: 0.3s;
-        display: block;
-        margin-top: 10px;
-    }
-
-    .menu-logout:hover {
-        background: rgba(255,255,255,0.15);
-        opacity: 1;
-        transform: translateX(5px);
-    }
-
-    .footer {
-        font-size: 12px;
-        opacity: 0.8;
-    }
-
-    /* MAIN */
-    .right {
-        flex: 1;
-        background: #f7f7ff;
-        padding: 40px;
-        overflow-y: auto;
-    }
-
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .header h1 {
-        color: #333;
-    }
-
-    .card {
-        margin-top: 25px;
-        background: #fff;
-        padding: 25px;
-        border-radius: 15px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-    }
-
-    /* INTERVIEW CARD */
-    .interview {
-        border: 1px solid #eee;
-        padding: 15px;
-        border-radius: 10px;
-        margin-bottom: 15px;
-    }
-
-    input {
-        width: 100%;
-        padding: 10px;
-        margin-top: 8px;
-        margin-bottom: 10px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-    }
-
-    /* STATUS */
-    .status {
-        display: inline-block;
-        margin-top: 8px;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 12px;
-    }
-
-    .pending { background: #fff3cd; }
-    .scheduled { background: #d1ecf1; }
-    .done { background: #d4edda; }
-
-    /* BUTTONS */
-    .btn {
-        background: #7b5cf0;
-        color: #fff;
-        border: none;
-        padding: 8px 12px;
-        border-radius: 8px;
-        cursor: pointer;
-        margin-top: 5px;
-    }
-
-    .btn:hover {
-        background: #5a3ee6;
-    }
-
-    .btn.secondary { background:#17a2b8; }
-    .btn.success { background:#28a745; }
-
-    </style>
-    </head>
-
-    <body>
-
-    <div class="container">
-
-    <!-- SIDEBAR -->
-    <div class="left">
-        <div>
-            <div class="logo">
-                <h2>Job Portal</h2>
-                <p>Admin Panel 👋</p>
-            </div>
-
-            <div class="menu">
-                <a href="dashboard.html">Dashboard</a>
-                <a href="job-post.html">Post Job</a>
-                <a href="applicants.html">Applicants</a>
-                <a href="interviews.html" class="active">Interviews</a>
-                <a href="hired.html">Hired</a>
-
-                <!-- LOGOUT -->
-                <a href="#" class="menu-logout" onclick="logout()">Logout</a>
-            </div>
-        </div>
-
-        <p class="footer">© 2026 Job Portal System</p>
-    </div>
-
-    <!-- MAIN -->
-    <div class="right">
-
-    <div class="header">
-        <h1>Interviews</h1>
-        <span>Hello, Admin!</span>
-    </div>
-
-    <div class="card" id="interviewList"></div>
-
-    </div>
-    </div>
-
-    <script>
-
-    // LOGOUT
-    function logout(){
-        localStorage.removeItem("isLoggedIn");
-        window.location.href = "Login.html";
-    }
-
-    // DATA
-    let interviews = JSON.parse(localStorage.getItem("interviews")) || [];
-    let hired = JSON.parse(localStorage.getItem("hired")) || [];
-    let rejected = JSON.parse(localStorage.getItem("rejected")) || [];
-    // RENDER
-    function renderInterviews(){
-
-    let container = document.getElementById("interviewList");
+    const container = document.getElementById("interviewList");
     container.innerHTML = "";
 
-    if(interviews.length === 0){
-    container.innerHTML = "<p>No interviews yet</p>";
-    return;
+    if(!interviews.length){
+        container.innerHTML = "<p>No interviews yet</p>";
+        return;
     }
 
     interviews.forEach((a,i)=>{
 
-    let status =
-    a.status === "Completed" ? `<span class="status done">Completed</span>` :
-    a.status === "Scheduled" ? `<span class="status scheduled">Scheduled</span>` :
-    `<span class="status pending">Pending</span>`;
+        container.innerHTML += `
+        <div class="interview">
 
-    container.innerHTML += `
-    <div class="interview">
+            <h3>${a?.name || "N/A"}</h3>
+            <p>${a?.position || ""}</p>
 
-    <h3>${a.name}</h3>
-    <p>${a.position}</p>
+            <p>Date: ${a?.date || "Not set"}</p>
+            <p>Time: ${a?.time || "Not set"}</p>
 
-    <p>Date: ${a.date || "Not set"}</p>
-    <p>Time: ${a.time || "Not set"}</p>
+            <input type="date" id="d${i}">
+            <input type="time" id="t${i}">
 
-    ${status}
+            <button class="btn" onclick="schedule(${i})">Schedule</button>
+            <button class="btn secondary" onclick="viewInterview(${i})">View</button>
+            <button class="btn success" onclick="completeInterview(${i})">Complete</button>
+            <button class="btn" style="background:#dc3545;" onclick="rejectInterview(${i})">Reject</button>
 
-    <input type="date" id="d${i}">
-    <input type="time" id="t${i}">
-
-    <button class="btn" onclick="schedule(${i})">Schedule</button>
-    <button class="btn secondary" onclick="viewInterview(${i})">View</button>
-    <button class="btn success" onclick="completeInterview(${i})">Complete</button>
-    <button class="btn" style="background:#dc3545;" onclick="rejectInterview(${i})">Reject</button>
-    </div>
-    `;
+        </div>
+        `;
     });
+}
 
-    }
+/* SCHEDULE */
+function schedule(i){
 
-    // ================= SCHEDULE INTERVIEW
-    function schedule(i){
+    if(!interviews[i]) return;
 
     let date = document.getElementById("d"+i).value;
     let time = document.getElementById("t"+i).value;
 
     if(!date || !time){
-    alert("Please fill date & time");
-    return;
+        alert("Please fill date & time");
+        return;
     }
 
-    /* UPDATE INTERVIEW */
     interviews[i].date = date;
     interviews[i].time = time;
     interviews[i].status = "Scheduled";
 
     localStorage.setItem("interviews", JSON.stringify(interviews));
 
-    /* UPDATE APPLICANTS */
     let applicants = JSON.parse(localStorage.getItem("applicants")) || [];
 
-    applicants = applicants.map(a => {
-
-    if(a.email === interviews[i].email && a.position === interviews[i].position){
-    return {
-    ...a,
-    status: "Scheduled",
-    date: date,
-    time: time
-    };
-    }
-
-    return a;
+    applicants = applicants.map(a=>{
+        if(a.email === interviews[i].email){
+            return {...a, status:"Scheduled", date, time};
+        }
+        return a;
     });
 
     localStorage.setItem("applicants", JSON.stringify(applicants));
 
-    /* 🔥 NOTIFICATION (FIXED FORMAT) */
     let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
 
     notifications.push({
-    email: interviews[i].email,
-    message: "📅 Interview scheduled on " + date + " at " + time,
-    type: "Scheduled",
-    date: new Date().toLocaleString()
+        email: interviews[i].email,
+        message: "📅 Interview scheduled on " + date + " at " + time,
+        type: "Scheduled",
+        date: new Date().toLocaleString()
     });
 
     localStorage.setItem("notifications", JSON.stringify(notifications));
 
     renderInterviews();
-
-    }
-
-    // ================= VIEW
-    function viewInterview(i){
-    alert(
-    interviews[i].name + "\n" +
-    interviews[i].position + "\n" +
-    (interviews[i].date || "") + " " + (interviews[i].time || "")
-    );
-    }
-    function rejectInterview(i){
-
-        if(!confirm("Are you sure you want to reject this applicant?")) return;
-
-        /* ADD TO REJECTED LIST */
-        rejected.push({
-            name: interviews[i].name,
-            email: interviews[i].email,
-            position: interviews[i].position,
-            status: "Rejected"
-        });
-
-        localStorage.setItem("rejected", JSON.stringify(rejected));
-
-        /* NOTIFICATION */
-        let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
-
-        notifications.push({
-            email: interviews[i].email,
-            message: "❌ Sorry, your application was not successful.",
-            type: "Rejected",
-            date: new Date().toLocaleString()
-        });
-
-        localStorage.setItem("notifications", JSON.stringify(notifications));
-
-        /* REMOVE FROM INTERVIEWS */
-        interviews.splice(i,1);
-        localStorage.setItem("interviews", JSON.stringify(interviews));
-
-        renderInterviews();
-    }
-    // ================= COMPLETE (HIRE)
-   function completeInterview(i){
-
-let c = interviews[i];
-
-/* ADD TO HIRED */
-let hired = JSON.parse(localStorage.getItem("hired")) || [];
-
-hired.push({
-name: c.name,
-email: (c.email || "").toLowerCase(),
-position: c.position,
-status: "Hired"
-});
-
-localStorage.setItem("hired", JSON.stringify(hired));
-
-/* UPDATE APPLICANTS */
-let applicants = JSON.parse(localStorage.getItem("applicants")) || [];
-
-applicants = applicants.map(a => {
-if((a.email || "").toLowerCase() === (c.email || "").toLowerCase()){
-return {...a, status:"Hired"};
 }
-return a;
-});
 
-localStorage.setItem("applicants", JSON.stringify(applicants));
-
-/* 🔥 FIXED NOTIFICATION (IMPORTANT PART) */
-let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
-
-notifications.push({
-email: (c.email || "").toLowerCase(),
-message: "🎉 Congratulations! You are HIRED for " + c.position,
-type: "Hired",
-date: new Date().toLocaleString()
-});
-
-localStorage.setItem("notifications", JSON.stringify(notifications));
-
-/* REMOVE FROM INTERVIEWS */
-interviews.splice(i,1);
-localStorage.setItem("interviews", JSON.stringify(interviews));
-
-renderInterviews();
+/* VIEW */
+function viewInterview(i){
+    if(!interviews[i]) return;
+    alert(`${interviews[i].name}\n${interviews[i].position}\n${interviews[i].date || ""} ${interviews[i].time || ""}`);
 }
+
+/* REJECT */
+function rejectInterview(i){
+
+    if(!interviews[i]) return;
+    if(!confirm("Reject this applicant?")) return;
+
+    rejected.push(interviews[i]);
+    localStorage.setItem("rejected", JSON.stringify(rejected));
+
+    interviews.splice(i,1);
+    localStorage.setItem("interviews", JSON.stringify(interviews));
 
     renderInterviews();
+}
 
-    </script>
+/* COMPLETE */
+function completeInterview(i){
 
-    </body>
-    </html>
+    if(!interviews[i]) return;
+
+    let c = interviews[i];
+
+    hired.push({
+        name: c.name,
+        email: (c.email || "").toLowerCase(),
+        position: c.position,
+        status: "Hired"
+    });
+
+    localStorage.setItem("hired", JSON.stringify(hired));
+
+    let applicants = JSON.parse(localStorage.getItem("applicants")) || [];
+
+    applicants = applicants.map(a=>{
+        if((a.email||"").toLowerCase() === (c.email||"").toLowerCase()){
+            return {...a, status:"Hired"};
+        }
+        return a;
+    });
+
+    localStorage.setItem("applicants", JSON.stringify(applicants));
+
+    let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
+
+    notifications.push({
+        email: (c.email || "").toLowerCase(),
+        message: "🎉 You are HIRED for " + c.position,
+        type: "Hired",
+        date: new Date().toLocaleString()
+    });
+
+    localStorage.setItem("notifications", JSON.stringify(notifications));
+
+    interviews.splice(i,1);
+    localStorage.setItem("interviews", JSON.stringify(interviews));
+
+    renderInterviews();
+}
+
+/* INIT */
+renderInterviews();
+
+</script>

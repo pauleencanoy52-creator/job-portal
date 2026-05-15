@@ -63,20 +63,18 @@ box-shadow:0 5px 15px rgba(0,0,0,0.05);
 
 <div class="container">
 
+<!-- SIDEBAR -->
 <div class="left">
-<div>
 <h2>User Panel</h2>
 
 <div class="menu">
 <a onclick="showTab('dashboard')">Jobs</a>
 <a onclick="showTab('notifications')">Notifications</a>
-<a onclick="showTab('profile')">Profile</a>
 <a onclick="logout()">Logout</a>
 </div>
-
-</div>
 </div>
 
+<!-- MAIN -->
 <div class="right">
 
 <div id="dashboard" class="section active">
@@ -94,23 +92,34 @@ box-shadow:0 5px 15px rgba(0,0,0,0.05);
 
 <script>
 
-let currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
-let userEmail = (currentUser.email || "").toLowerCase().trim();
+/* =========================
+   GET USER (FIXED SAFE)
+========================= */
+function getUserEmail(){
+    let user = JSON.parse(localStorage.getItem("currentUser")) || {};
+    return (user.email || "").toLowerCase().trim();
+}
 
-/* TAB */
+/* =========================
+   TAB SWITCH
+========================= */
 function showTab(tab){
 document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
 document.getElementById(tab).classList.add("active");
 renderNotifications();
 }
 
-/* LOGOUT */
+/* =========================
+   LOGOUT
+========================= */
 function logout(){
 localStorage.removeItem("currentUser");
-location.href="index.html";
+window.location.href = "index.html";
 }
 
-/* JOBS */
+/* =========================
+   JOBS
+========================= */
 function renderJobs(){
 let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
 
@@ -125,14 +134,17 @@ jobs.length === 0
 `).join("");
 }
 
-/* 🔥 FIXED NOTIFICATIONS */
+/* =========================
+   FIXED NOTIFICATIONS
+========================= */
 function renderNotifications(){
 
 let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
 
-/* IMPORTANT FIX */
+let myEmail = getUserEmail();
+
 let myNotifs = notifications.filter(n =>
-(n.email || "").toLowerCase().trim() === userEmail
+    (n.email || "").toLowerCase().trim() === myEmail
 );
 
 let box = document.getElementById("notifList");
@@ -144,17 +156,20 @@ return;
 
 box.innerHTML = myNotifs.map(n=>`
 <div class="card">
-<p>
-<b>${n.type || "Info"}:</b> ${n.message}
-</p>
+<p><b>${n.type || "Info"}:</b> ${n.message}</p>
 <small>${n.date || ""}</small>
 </div>
 `).join("");
 }
 
-/* REALTIME UPDATE */
+/* =========================
+   AUTO REFRESH (REALTIME)
+========================= */
 setInterval(renderNotifications, 1500);
 
+/* =========================
+   INIT
+========================= */
 renderJobs();
 renderNotifications();
 

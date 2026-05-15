@@ -32,11 +32,11 @@ margin-top:30px;
 .menu a{
 color:#fff;
 text-decoration:none;
-padding:12px 15px;
+padding:12px;
 border-radius:10px;
 cursor:pointer;
-opacity:0.85;
 }
+
 .menu a:hover{background:rgba(255,255,255,0.15);}
 
 .right{
@@ -63,7 +63,6 @@ box-shadow:0 5px 15px rgba(0,0,0,0.05);
 
 <div class="container">
 
-<!-- SIDEBAR -->
 <div class="left">
 <div>
 <h2>User Panel</h2>
@@ -71,13 +70,13 @@ box-shadow:0 5px 15px rgba(0,0,0,0.05);
 <div class="menu">
 <a onclick="showTab('dashboard')">Jobs</a>
 <a onclick="showTab('notifications')">Notifications</a>
+<a onclick="showTab('profile')">Profile</a>
 <a onclick="logout()">Logout</a>
 </div>
 
 </div>
 </div>
 
-<!-- MAIN -->
 <div class="right">
 
 <div id="dashboard" class="section active">
@@ -96,7 +95,7 @@ box-shadow:0 5px 15px rgba(0,0,0,0.05);
 <script>
 
 let currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
-let email = (currentUser.email || "").toLowerCase().trim();
+let userEmail = (currentUser.email || "").toLowerCase().trim();
 
 /* TAB */
 function showTab(tab){
@@ -114,9 +113,10 @@ location.href="index.html";
 /* JOBS */
 function renderJobs(){
 let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+
 document.getElementById("jobs").innerHTML =
 jobs.length === 0
-? "<p>No jobs</p>"
+? "<p>No jobs available</p>"
 : jobs.map(j=>`
 <div class="card">
 <h3>${j.title}</h3>
@@ -130,27 +130,29 @@ function renderNotifications(){
 
 let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
 
-/* IMPORTANT FIX: safe compare */
+/* IMPORTANT FIX */
 let myNotifs = notifications.filter(n =>
-(n.email || "").toLowerCase().trim() === email
+(n.email || "").toLowerCase().trim() === userEmail
 );
 
-let container = document.getElementById("notifList");
+let box = document.getElementById("notifList");
 
 if(myNotifs.length === 0){
-container.innerHTML = "<p>No notifications</p>";
+box.innerHTML = "<p>No notifications yet</p>";
 return;
 }
 
-container.innerHTML = myNotifs.map(n=>`
+box.innerHTML = myNotifs.map(n=>`
 <div class="card">
-<p><b>${n.type || "Info"}:</b> ${n.message}</p>
+<p>
+<b>${n.type || "Info"}:</b> ${n.message}
+</p>
 <small>${n.date || ""}</small>
 </div>
 `).join("");
 }
 
-/* AUTO SYNC */
+/* REALTIME UPDATE */
 setInterval(renderNotifications, 1500);
 
 renderJobs();

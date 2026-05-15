@@ -15,12 +15,8 @@
     font-family: 'Inter', sans-serif;
 }
 
-.container {
-    display: flex;
-    height: 100vh;
-}
+.container { display: flex; height: 100vh; }
 
-/* SIDEBAR */
 .left {
     width: 25%;
     min-width: 240px;
@@ -32,56 +28,19 @@
     justify-content: space-between;
 }
 
-.logo h2 { font-size: 24px; margin-bottom: 5px; }
-.logo p { font-size: 13px; opacity: 0.9; }
-
-.menu {
-    margin-top: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
 .menu a {
-    color: #fff;
-    text-decoration: none;
-    padding: 12px 15px;
-    border-radius: 10px;
-    font-size: 14px;
-    opacity: 0.85;
-    transition: 0.3s;
+    display:block;
+    color:#fff;
+    text-decoration:none;
+    padding:12px;
+    border-radius:10px;
+    margin-top:10px;
 }
 
-.menu a:hover {
-    background: rgba(255,255,255,0.15);
-    opacity: 1;
-    transform: translateX(5px);
-}
+.menu a:hover { background: rgba(255,255,255,0.15); }
 
-.menu a.active {
-    background: rgba(255,255,255,0.25);
-    font-weight: 600;
-}
+.menu a.active { background: rgba(255,255,255,0.25); }
 
-.menu-logout {
-    color: #fff;
-    text-decoration: none;
-    padding: 12px 15px;
-    border-radius: 10px;
-    font-size: 14px;
-    opacity: 0.85;
-    transition: 0.3s;
-    display: block;
-    margin-top: 10px;
-}
-
-.menu-logout:hover {
-    background: rgba(255,255,255,0.15);
-    opacity: 1;
-    transform: translateX(5px);
-}
-
-/* MAIN */
 .right {
     flex: 1;
     background: #f7f7ff;
@@ -89,25 +48,14 @@
     overflow-y: auto;
 }
 
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.header h1 {
-    color: #333;
-}
-
 .card {
-    margin-top: 25px;
+    margin-top: 20px;
     background: #fff;
-    padding: 25px;
+    padding: 20px;
     border-radius: 15px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.08);
 }
 
-/* APPLICANT */
 .applicant {
     border: 1px solid #eee;
     padding: 15px;
@@ -115,41 +63,20 @@
     margin-bottom: 15px;
 }
 
-/* BUTTONS */
 .btn {
-    background: #7b5cf0;
-    color: #fff;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 8px;
-    margin-right: 5px;
+    background:#7b5cf0;
+    color:#fff;
+    border:none;
+    padding:8px 12px;
+    border-radius:8px;
+    cursor:pointer;
+    margin-right:5px;
 }
 
-.btn:hover { background: #5a3ee6; }
-.btn.secondary { background:#17a2b8; }
+.btn:hover { background:#5a3ee6; }
 .btn.success { background:#28c76f; }
 .btn.danger { background:#ea5455; }
-
-.footer {
-    font-size: 12px;
-    opacity: 0.8;
-}
-
-/* PROGRESS BAR */
-.bar {
-    background:#eee;
-    height:8px;
-    border-radius:10px;
-    margin:8px 0;
-}
-
-.bar-fill {
-    height:8px;
-    background:#7b5cf0;
-    border-radius:10px;
-}
+.btn.secondary { background:#17a2b8; }
 </style>
 </head>
 
@@ -160,10 +87,7 @@
 <!-- SIDEBAR -->
 <div class="left">
     <div>
-        <div class="logo">
-            <h2>Job Portal</h2>
-            <p>Admin Panel 👋</p>
-        </div>
+        <h2>Job Portal</h2>
 
         <div class="menu">
             <a href="dashboard.html">Dashboard</a>
@@ -172,20 +96,15 @@
             <a href="interviews.html">Interviews</a>
             <a href="hired.html">Hired</a>
 
-            <a href="#" class="menu-logout" onclick="logout()">Logout</a>
+            <a href="#" onclick="logout()">Logout</a>
         </div>
     </div>
-
-    <p class="footer">© 2026 Job Portal System</p>
 </div>
 
 <!-- MAIN -->
 <div class="right">
 
-<div class="header">
-    <h1>Applicants</h1>
-    <span>Hello, Admin!</span>
-</div>
+<h1>Applicants</h1>
 
 <div class="card" id="applicantList"></div>
 
@@ -194,126 +113,119 @@
 
 <script>
 
-// LOGOUT
 function logout(){
-    localStorage.removeItem("isLoggedIn");
-    window.location.href = "Login.html";
+    localStorage.removeItem("currentUser");
+    window.location = "login.html";
 }
 
-// DATA
 let applicants = JSON.parse(localStorage.getItem("applicants")) || [];
 let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
 
-/* 🔔 NOTIFICATION SYSTEM */
 function addNotification(email, message, type){
     let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
 
     notifications.push({
         email: (email || "").toLowerCase(),
-        message: message,
-        type: type,
+        message,
+        type,
         date: new Date().toLocaleString()
     });
 
     localStorage.setItem("notifications", JSON.stringify(notifications));
 }
 
-// RENDER
 function renderApplicants(){
-let container = document.getElementById("applicantList");
-container.innerHTML = "";
 
-if(applicants.length === 0){
-container.innerHTML = "<p>No applicants yet.</p>";
-return;
-}
+    const container = document.getElementById("applicantList");
+    container.innerHTML = "";
 
-applicants.forEach((a,i)=>{
-
-    let job = jobs.find(j => j.title === a.position);
-    let rating = 0;
-
-    if(job && job.skills && a.skills){
-        let jobSkills = job.skills.map(s => s.toLowerCase());
-        let userSkills = Array.isArray(a.skills)
-            ? a.skills.map(s => s.toLowerCase())
-            : [];
-
-        let matched = jobSkills.filter(skill => userSkills.includes(skill));
-        rating = Math.round((matched.length / jobSkills.length) * 100);
+    if(applicants.length === 0){
+        container.innerHTML = "<p>No applicants yet.</p>";
+        return;
     }
 
-    container.innerHTML += `
-    <div class="applicant">
-        <h3>${a.name}</h3>
-        <p><strong>Position:</strong> ${a.position}</p>
-        <p><strong>Email:</strong> ${a.email}</p>
-        <p><strong>Skills:</strong> ${(a.skills || []).join(", ")}</p>
-        <p><strong>Rating:</strong> ${rating}% match</p>
+    applicants.forEach((a,i)=>{
 
-        <button class="btn secondary" onclick="viewApplicant(${i})">View</button>
-        <button class="btn success" onclick="acceptApplicant(${i})">Accept</button>
-        <button class="btn danger" onclick="rejectApplicant(${i})">Reject</button>
-    </div>
-    `;
-});
+        let job = jobs.find(j => j.title === a.position);
+
+        let rating = 0;
+
+        if(job?.skills?.length && Array.isArray(a.skills)){
+
+            let jobSkills = job.skills.map(s => s.toLowerCase());
+            let userSkills = a.skills.map(s => s.toLowerCase());
+
+            let matched = jobSkills.filter(s => userSkills.includes(s));
+
+            rating = Math.round((matched.length / jobSkills.length) * 100);
+        }
+
+        container.innerHTML += `
+        <div class="applicant">
+            <h3>${a.name}</h3>
+            <p><b>Position:</b> ${a.position}</p>
+            <p><b>Email:</b> ${a.email}</p>
+            <p><b>Skills:</b> ${(a.skills || []).join(", ")}</p>
+            <p><b>Match:</b> ${rating}%</p>
+
+            <button class="btn secondary" onclick="viewApplicant(${i})">View</button>
+            <button class="btn success" onclick="acceptApplicant(${i})">Accept</button>
+            <button class="btn danger" onclick="rejectApplicant(${i})">Reject</button>
+        </div>
+        `;
+    });
 }
 
-// VIEW
 function viewApplicant(i){
-alert(
-"Name: " + applicants[i].name +
-"\nPosition: " + applicants[i].position +
-"\nEmail: " + applicants[i].email
-);
+    alert(`${applicants[i].name}
+${applicants[i].position}
+${applicants[i].email}`);
 }
 
-// ✅ ACCEPT → SEND INTERVIEW + NOTIF
 function acceptApplicant(i){
-let selected = applicants[i];
 
-let interviews = JSON.parse(localStorage.getItem("interviews")) || [];
+    let selected = applicants[i];
 
-interviews.push({
-name: selected.name,
-email: selected.email,
-position: selected.position,
-skills: selected.skills || [],
-status: "Pending"
-});
+    let interviews = JSON.parse(localStorage.getItem("interviews")) || [];
 
-localStorage.setItem("interviews", JSON.stringify(interviews));
+    interviews.push({
+        name: selected.name,
+        email: selected.email,
+        position: selected.position,
+        skills: selected.skills || [],
+        status: "Pending"
+    });
 
-/* 🔔 NOTIFICATION */
-addNotification(
-selected.email,
-"📅 You have been selected for interview for " + selected.position,
-"Scheduled"
-);
+    localStorage.setItem("interviews", JSON.stringify(interviews));
 
-applicants.splice(i,1);
-localStorage.setItem("applicants", JSON.stringify(applicants));
+    addNotification(
+        selected.email,
+        "📅 Selected for interview: " + selected.position,
+        "Scheduled"
+    );
 
-renderApplicants();
+    applicants.splice(i,1);
+    localStorage.setItem("applicants", JSON.stringify(applicants));
+
+    renderApplicants();
 }
 
-// ❌ REJECT → SEND NOTIF
 function rejectApplicant(i){
-let selected = applicants[i];
 
-addNotification(
-selected.email,
-"❌ Your application for " + selected.position + " has been rejected.",
-"Rejected"
-);
+    let selected = applicants[i];
 
-applicants.splice(i,1);
-localStorage.setItem("applicants", JSON.stringify(applicants));
+    addNotification(
+        selected.email,
+        "❌ Rejected for: " + selected.position,
+        "Rejected"
+    );
 
-renderApplicants();
+    applicants.splice(i,1);
+    localStorage.setItem("applicants", JSON.stringify(applicants));
+
+    renderApplicants();
 }
 
-// INIT
 renderApplicants();
 
 </script>

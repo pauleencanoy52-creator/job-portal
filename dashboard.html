@@ -47,38 +47,18 @@
     text-decoration: none;
     padding: 12px 15px;
     border-radius: 10px;
-    font-size: 14px;
-    opacity: 0.85;
-    transition: 0.3s;
 }
 
 .menu a:hover {
     background: rgba(255,255,255,0.15);
 }
 
-.menu a.active {
-    background: rgba(255,255,255,0.25);
-}
-
-.menu-logout {
-    margin-top: 10px;
-}
-
-/* MAIN */
 .right {
     flex: 1;
     background: #f5f6fa;
     padding: 40px;
     overflow-y: auto;
 }
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.header h1 { color: #333; }
 
 .card {
     margin-top: 25px;
@@ -104,42 +84,11 @@
 
 .stat-box h2 { color: #5a3ee6; }
 
-/* JOB LIST */
-.job-list{
-    margin-top:30px;
-}
-
 .job-item{
     background:#fff;
     padding:18px;
     border-radius:15px;
     margin-bottom:15px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.job-info h3{
-    color:#5a3ee6;
-    margin-bottom:5px;
-}
-
-.job-info p{
-    color:#777;
-    font-size:14px;
-}
-
-.job-date{
-    font-size:13px;
-    color:#999;
-}
-
-.empty{
-    background:#fff;
-    padding:20px;
-    border-radius:15px;
-    text-align:center;
-    color:#888;
 }
 </style>
 </head>
@@ -151,18 +100,16 @@
 <!-- SIDEBAR -->
 <div class="left">
     <div>
-        <div class="logo">
-            <h2>Job Portal</h2>
-            <p>Admin Panel 👋</p>
-        </div>
+        <h2>Job Portal</h2>
+        <p>Admin Panel</p>
 
         <div class="menu">
-            <a href="dashboard.html" class="active">Dashboard</a>
+            <a href="dashboard.html">Dashboard</a>
             <a href="job-post.html">Post Job</a>
             <a href="applicants.html">Applicants</a>
             <a href="interviews.html">Interviews</a>
             <a href="hired.html">Hired</a>
-            <a href="#" class="menu-logout" onclick="logout()">Logout</a>
+            <a href="#" onclick="logout()">Logout</a>
         </div>
     </div>
 </div>
@@ -170,10 +117,7 @@
 <!-- MAIN -->
 <div class="right">
 
-    <div class="header">
-        <h1>Dashboard</h1>
-        <span>Hello, Admin!</span>
-    </div>
+    <h1>Dashboard</h1>
 
     <div class="card">
 
@@ -199,25 +143,44 @@
             </div>
         </div>
 
-        <div class="job-list">
-            <h2 style="margin-bottom:15px;">Recent Jobs</h2>
-            <div id="jobContainer" class="empty">Loading...</div>
-        </div>
+        <h2 style="margin-top:20px;">Recent Jobs</h2>
+        <div id="jobContainer">Loading...</div>
 
     </div>
-</div>
 
 </div>
 
-<script>
+</div>
 
-// LOGOUT FIX (IMPORTANT)
-function logout(){
-    localStorage.removeItem("isLoggedIn");
-    window.location.href = "index.html";
-}
+<script type="module">
 
-// SAFE PARSE
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAtFG9KPZgfZRGh8GlOI-hNHSXdI2IMuTw",
+  authDomain: "job-portal-847bb.firebaseapp.com",
+  projectId: "job-portal-847bb"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+/// 🔐 PROTECT DASHBOARD
+onAuthStateChanged(auth, (user) => {
+    if (!user) {
+        window.location = "index.html";
+    }
+});
+
+/// 🚪 LOGOUT
+window.logout = async function(){
+    await signOut(auth);
+    window.location = "index.html";
+};
+
+/// LOCAL STORAGE DATA
 function getData(key){
     try {
         return JSON.parse(localStorage.getItem(key)) || [];
@@ -233,12 +196,6 @@ function loadData(){
     let interviews = getData("interviews");
     let hired = getData("hired");
 
-    jobs = Array.isArray(jobs) ? jobs : [];
-    applicants = Array.isArray(applicants) ? applicants : [];
-    interviews = Array.isArray(interviews) ? interviews : [];
-    hired = Array.isArray(hired) ? hired : [];
-
-    // COUNTS
     document.getElementById("totalJobs").innerText = jobs.length;
     document.getElementById("totalApplicants").innerText = applicants.length;
     document.getElementById("totalInterviews").innerText = interviews.length;
@@ -247,33 +204,23 @@ function loadData(){
     const container = document.getElementById("jobContainer");
 
     if(jobs.length === 0){
-        container.innerHTML = `<div class="empty">No jobs posted yet</div>`;
+        container.innerHTML = "No jobs yet";
         return;
     }
 
     container.innerHTML = "";
 
-    jobs.slice().reverse().forEach(job => {
-
+    jobs.forEach(job => {
         container.innerHTML += `
-        <div class="job-item">
-
-            <div class="job-info">
-                <h3>${job?.title || "Untitled Job"}</h3>
-                <p>${job?.company || "No Company"}</p>
-                <div>${job?.description || ""}</div>
+            <div class="job-item">
+                <h3>${job.title}</h3>
+                <p>${job.company}</p>
+                <small>${job.description}</small>
             </div>
-
-            <div class="job-date">
-                ${job?.date || new Date().toLocaleDateString()}
-            </div>
-
-        </div>
         `;
     });
 }
 
-// AUTO REFRESH
 setInterval(loadData, 2000);
 loadData();
 

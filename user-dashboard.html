@@ -12,6 +12,7 @@
 
 .container{display:flex;height:100vh;}
 
+/* LEFT */
 .left{
 width:25%;
 min-width:240px;
@@ -35,10 +36,14 @@ text-decoration:none;
 padding:12px;
 border-radius:10px;
 cursor:pointer;
+background:rgba(255,255,255,0.05);
 }
 
-.menu a:hover{background:rgba(255,255,255,0.15);}
+.menu a:hover{
+background:rgba(255,255,255,0.15);
+}
 
+/* RIGHT */
 .right{
 flex:1;
 background:#f5f6fa;
@@ -58,22 +63,40 @@ box-shadow:0 5px 15px rgba(0,0,0,0.05);
 cursor:pointer;
 }
 
+.card:hover{
+transform:scale(1.01);
+}
+
+/* APPLY */
 input,textarea{
 width:100%;
-padding:8px;
-margin:5px 0;
+padding:10px;
+margin:6px 0;
 border:1px solid #ddd;
 border-radius:6px;
 }
 
 button{
-padding:8px 12px;
+background:#7b5cf0;
+color:#fff;
 border:none;
+padding:10px 14px;
 border-radius:6px;
 cursor:pointer;
 margin-top:8px;
 }
 
+button:hover{background:#5a3ee6;}
+
+.skill-box label{
+display:inline-block;
+background:#fff;
+padding:8px 10px;
+border:1px solid #ddd;
+border-radius:6px;
+margin:5px;
+cursor:pointer;
+}
 </style>
 </head>
 
@@ -81,7 +104,7 @@ margin-top:8px;
 
 <div class="container">
 
-<!-- SIDEBAR -->
+<!-- LEFT -->
 <div class="left">
 <h2>User Panel</h2>
 
@@ -92,7 +115,7 @@ margin-top:8px;
 </div>
 </div>
 
-<!-- MAIN -->
+<!-- RIGHT -->
 <div class="right">
 
 <!-- JOBS -->
@@ -101,7 +124,7 @@ margin-top:8px;
 <div id="jobs"></div>
 </div>
 
-<!-- NOTIFICATIONS -->
+<!-- NOTIF -->
 <div id="notifications" class="section">
 <h2>Notifications</h2>
 <div id="notifList"></div>
@@ -117,11 +140,11 @@ margin-top:8px;
 <div id="skillsBox"></div>
 
 <input id="applyName" placeholder="Name">
-<input id="applyEmail" placeholder="Email" readonly>
+<input id="applyEmail" readonly>
 <textarea id="applyMsg" placeholder="Message"></textarea>
 
 <button onclick="submitApply()">Submit Application</button>
-<button onclick="showTab('dashboard')">⬅ Back</button>
+<button onclick="showTab('dashboard')" style="background:#17a2b8;">⬅ Back</button>
 </div>
 
 </div>
@@ -129,21 +152,15 @@ margin-top:8px;
 
 <script>
 
-/* =========================
-   GET USER FROM LOGIN
-========================= */
+/* USER FROM LOGIN */
 let currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
 let userEmail = (currentUser.email || "").toLowerCase().trim();
 
-/* =========================
-   GLOBAL
-========================= */
+/* GLOBAL */
 let selectedJob = null;
 let selectedSkills = [];
 
-/* =========================
-   TAB SWITCH
-========================= */
+/* SWITCH TAB */
 function showTab(tab){
 document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
 document.getElementById(tab).classList.add("active");
@@ -151,45 +168,37 @@ document.getElementById(tab).classList.add("active");
 if(tab === "notifications") renderNotifications();
 }
 
-/* =========================
-   LOGOUT
-========================= */
+/* LOGOUT */
 function logout(){
 localStorage.removeItem("currentUser");
-window.location.href = "index.html";
+location.href="index.html";
 }
 
-/* =========================
-   RENDER JOBS (CLICKABLE FIX)
-========================= */
+/* JOBS */
 function renderJobs(){
 let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
 
 document.getElementById("jobs").innerHTML =
-jobs.length === 0
-? "<p>No jobs available</p>"
-: jobs.map((j,i)=>`
+jobs.length ? jobs.map((j,i)=>`
 <div class="card" onclick="selectJob(${i})">
 <h3>${j.title}</h3>
 <p>${j.company}</p>
 </div>
-`).join("");
+`).join("")
+: "<p>No jobs available</p>";
 }
 
-/* =========================
-   SELECT JOB (FIX CLICK)
-========================= */
+/* CLICK JOB */
 function selectJob(i){
 let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
-
 selectedJob = jobs[i];
+
 selectedSkills = [];
 
 document.getElementById("jobTitle").innerText = selectedJob.title;
 
-/* AUTO EMAIL FROM LOGIN */
-document.getElementById("applyEmail").value = userEmail;
-document.getElementById("applyName").value = currentUser.name || "";
+/* AUTO EMAIL (IMPORTANT FIX) */
+document.getElementById("applyEmail").value = currentUser.email;
 
 /* SKILLS */
 let skills = selectedJob.skills || ["HTML","CSS","JS"];
@@ -205,29 +214,22 @@ ${s}
 showTab("applyBox");
 }
 
-/* =========================
-   TOGGLE SKILL
-========================= */
+/* SKILL TOGGLE */
 function toggleSkill(el){
-if(el.checked){
-selectedSkills.push(el.value);
-}else{
-selectedSkills = selectedSkills.filter(s=>s!==el.value);
-}
+if(el.checked) selectedSkills.push(el.value);
+else selectedSkills = selectedSkills.filter(s=>s!==el.value);
 }
 
-/* =========================
-   SUBMIT APPLICATION
-========================= */
+/* APPLY */
 function submitApply(){
 
 let name = document.getElementById("applyName").value;
 let email = document.getElementById("applyEmail").value;
 let msg = document.getElementById("applyMsg").value;
 
-let applicants = JSON.parse(localStorage.getItem("applicants")) || [];
+let apps = JSON.parse(localStorage.getItem("applicants")) || [];
 
-applicants.push({
+apps.push({
 name,
 email,
 position: selectedJob.title,
@@ -235,46 +237,42 @@ message: msg,
 skills: selectedSkills
 });
 
-localStorage.setItem("applicants", JSON.stringify(applicants));
+localStorage.setItem("applicants", JSON.stringify(apps));
 
-/* NOTIFICATION FIX */
-let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
+/* NOTIFICATIONS FIX */
+let notif = JSON.parse(localStorage.getItem("notifications")) || [];
 
-notifications.push({
+notif.push({
 email: email,
 message: "Applied for " + selectedJob.title,
 type: "Applied",
 date: new Date().toLocaleString()
 });
 
-localStorage.setItem("notifications", JSON.stringify(notifications));
+localStorage.setItem("notifications", JSON.stringify(notif));
 
 alert("Application Sent!");
-
 showTab("notifications");
 renderNotifications();
 }
 
-/* =========================
-   FIXED NOTIFICATIONS
-========================= */
+/* NOTIFICATIONS FIX */
 function renderNotifications(){
 
-let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
+let notif = JSON.parse(localStorage.getItem("notifications")) || [];
 
-let myNotifs = notifications.filter(n =>
+let my = notif.filter(n =>
 (n.email || "").toLowerCase().trim() === userEmail
 );
 
 document.getElementById("notifList").innerHTML =
-myNotifs.length === 0
-? "<p>No notifications yet</p>"
-: myNotifs.map(n=>`
+my.length ? my.map(n=>`
 <div class="card">
-<b>${n.type}:</b> ${n.message}<br>
-<small>${n.date}</small>
+<b>${n.type}:</b> ${n.message}
+<br><small>${n.date}</small>
 </div>
-`).join("");
+`).join("")
+: "<p>No notifications yet</p>";
 }
 
 /* AUTO UPDATE */

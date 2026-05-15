@@ -12,7 +12,6 @@
     --primary:#7b5cf0;
     --secondary:#5a3ee6;
     --bg:#f5f6fa;
-    --card:#ffffff;
 }
 
 *{
@@ -22,9 +21,7 @@
     font-family:'Inter', sans-serif;
 }
 
-body{
-    background:var(--bg);
-}
+body{ background:var(--bg); }
 
 .container{
     display:flex;
@@ -40,10 +37,6 @@ body{
     display:flex;
     flex-direction:column;
     justify-content:space-between;
-}
-
-.left h2{
-    font-size:22px;
 }
 
 .menu{
@@ -63,11 +56,6 @@ body{
 
 .menu a:hover{
     background:rgba(255,255,255,0.15);
-    transform:translateX(5px);
-}
-
-.menu a.active{
-    background:rgba(255,255,255,0.25);
 }
 
 /* MAIN */
@@ -85,7 +73,6 @@ body{
     margin-top:20px;
 }
 
-/* INTERVIEW ITEM */
 .interview{
     border:1px solid #eee;
     padding:15px;
@@ -93,7 +80,6 @@ body{
     margin-bottom:15px;
 }
 
-/* INPUT */
 input{
     width:100%;
     padding:10px;
@@ -101,18 +87,6 @@ input{
     border:1px solid #ddd;
     border-radius:8px;
 }
-
-/* STATUS */
-.status{
-    display:inline-block;
-    padding:4px 10px;
-    border-radius:20px;
-    font-size:12px;
-}
-
-.pending{ background:#fff3cd; }
-.scheduled{ background:#d1ecf1; }
-.done{ background:#d4edda; }
 
 /* BUTTONS */
 button{
@@ -123,21 +97,13 @@ button{
     border-radius:8px;
     cursor:pointer;
     margin-top:5px;
-    transition:0.3s;
 }
 
-button:hover{
-    background:var(--secondary);
-}
+button:hover{ background:var(--secondary); }
 
 .danger{ background:#dc3545; }
-.danger:hover{ background:#b52a37; }
-
 .success{ background:#28a745; }
-.success:hover{ background:#1f7a32; }
-
 .secondary{ background:#17a2b8; }
-.secondary:hover{ background:#117a8b; }
 
 </style>
 </head>
@@ -155,8 +121,11 @@ button:hover{
             <a href="dashboard.html">Dashboard</a>
             <a href="job-post.html">Post Job</a>
             <a href="applicants.html">Applicants</a>
-            <a href="interviews.html" class="active">Interviews</a>
+            <a href="interviews.html">Interviews</a>
             <a href="hired.html">Hired</a>
+
+            <!-- ✅ LOGOUT ADDED -->
+            <a href="#" onclick="logout()">Logout</a>
         </div>
     </div>
 </div>
@@ -173,13 +142,13 @@ button:hover{
 
 <script>
 
-// LOGOUT (optional)
+// ✅ LOGOUT FUNCTION (FIXED)
 function logout(){
     localStorage.removeItem("isLoggedIn");
     window.location.href = "index.html";
 }
 
-// LOAD DATA
+// GET DATA
 function getData(key){
     try{
         return JSON.parse(localStorage.getItem(key)) || [];
@@ -203,11 +172,6 @@ function renderInterviews(){
 
     interviews.forEach((a,i)=>{
 
-        let status =
-        a.status === "Completed" ? `<span class="status done">Completed</span>` :
-        a.status === "Scheduled" ? `<span class="status scheduled">Scheduled</span>` :
-        `<span class="status pending">Pending</span>`;
-
         container.innerHTML += `
         <div class="interview">
 
@@ -216,8 +180,6 @@ function renderInterviews(){
 
             <p>Date: ${a.date || "Not set"}</p>
             <p>Time: ${a.time || "Not set"}</p>
-
-            ${status}
 
             <input type="date" id="d${i}">
             <input type="time" id="t${i}">
@@ -234,7 +196,6 @@ function renderInterviews(){
 
 // SCHEDULE
 function schedule(i){
-
     let interviews = getData("interviews");
 
     let date = document.getElementById("d"+i).value;
@@ -265,7 +226,7 @@ function viewInterview(i){
     );
 }
 
-// COMPLETE (MOVE TO HIRED)
+// COMPLETE
 function completeInterview(i){
 
     let interviews = getData("interviews");

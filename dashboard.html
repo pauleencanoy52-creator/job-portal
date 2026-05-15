@@ -43,9 +43,6 @@
 }
 
 .menu a {
-    display: flex;
-    align-items: center;
-    gap: 10px;
     color: #fff;
     text-decoration: none;
     padding: 12px 15px;
@@ -57,31 +54,14 @@
 
 .menu a:hover {
     background: rgba(255,255,255,0.15);
-    opacity: 1;
-    transform: translateX(5px);
 }
 
 .menu a.active {
     background: rgba(255,255,255,0.25);
-    font-weight: 600;
 }
 
 .menu-logout {
-    color: #fff;
-    text-decoration: none;
-    padding: 12px 15px;
-    border-radius: 10px;
-    font-size: 14px;
-    opacity: 0.85;
-    transition: 0.3s;
-    display: block;
     margin-top: 10px;
-}
-
-.menu-logout:hover {
-    background: rgba(255,255,255,0.15);
-    opacity: 1;
-    transform: translateX(5px);
 }
 
 /* MAIN */
@@ -123,18 +103,10 @@
 }
 
 .stat-box h2 { color: #5a3ee6; }
+
 /* JOB LIST */
 .job-list{
     margin-top:30px;
-}
-
-.job-header{
-    margin-bottom:15px;
-}
-
-.job-header h2{
-    color:#333;
-    font-size:22px;
 }
 
 .job-item{
@@ -145,12 +117,6 @@
     display:flex;
     justify-content:space-between;
     align-items:center;
-    transition:0.3s;
-}
-
-.job-item:hover{
-    transform:translateY(-3px);
-    box-shadow:0 5px 15px rgba(0,0,0,0.08);
 }
 
 .job-info h3{
@@ -182,112 +148,95 @@
 
 <div class="container">
 
-    <!-- SIDEBAR -->
-    <div class="left">
-        <div>
-            <div class="logo">
-                <h2>Job Portal</h2>
-                <p>Admin Panel 👋</p>
-            </div>
-
-            <div class="menu">
-                <a href="dashboard.html" class="active">Dashboard</a>
-                <a href="job-post.html">Post Job</a>
-                <a href="applicants.html">Applicants</a>
-                <a href="interviews.html">Interviews</a>
-                <a href="hired.html">Hired</a>
-
-                <a href="#" class="menu-logout" onclick="logout()">Logout</a>
-            </div>
+<!-- SIDEBAR -->
+<div class="left">
+    <div>
+        <div class="logo">
+            <h2>Job Portal</h2>
+            <p>Admin Panel 👋</p>
         </div>
 
-        <p class="footer">© 2026 Job Portal System</p>
+        <div class="menu">
+            <a href="dashboard.html" class="active">Dashboard</a>
+            <a href="job-post.html">Post Job</a>
+            <a href="applicants.html">Applicants</a>
+            <a href="interviews.html">Interviews</a>
+            <a href="hired.html">Hired</a>
+            <a href="#" class="menu-logout" onclick="logout()">Logout</a>
+        </div>
     </div>
-
-    <!-- MAIN -->
-    <div class="right">
-
-        <div class="header">
-            <h1>Dashboard</h1>
-            <span>Hello, Admin!</span>
-        </div>
-
-        <div class="card">
-
-    <div class="stats">
-
-        <div class="stat-box">
-            <h2 id="totalJobs">0</h2>
-            <p>Post Job</p>
-        </div>
-
-        <div class="stat-box">
-            <h2 id="totalApplicants">0</h2>
-            <p>Applicants</p>
-        </div>
-
-        <div class="stat-box">
-            <h2 id="totalInterviews">0</h2>
-            <p>Interviews</p>
-        </div>
-
-        <div class="stat-box">
-            <h2 id="totalHired">0</h2>
-            <p>Hired</p>
-        </div>
-
-    </div>
-
-    <!-- JOB LIST -->
-    <div class="job-list">
-
-        <div class="job-header">
-            <h2>Recent Posted Jobs</h2>
-        </div>
-
-        <div id="jobContainer">
-
-            <div class="empty">
-                No jobs posted yet
-            </div>
-
-        </div>
-
-    </div>
-
 </div>
+
+<!-- MAIN -->
+<div class="right">
+
+    <div class="header">
+        <h1>Dashboard</h1>
+        <span>Hello, Admin!</span>
+    </div>
+
+    <div class="card">
+
+        <div class="stats">
+            <div class="stat-box">
+                <h2 id="totalJobs">0</h2>
+                <p>Jobs</p>
+            </div>
+
+            <div class="stat-box">
+                <h2 id="totalApplicants">0</h2>
+                <p>Applicants</p>
+            </div>
+
+            <div class="stat-box">
+                <h2 id="totalInterviews">0</h2>
+                <p>Interviews</p>
+            </div>
+
+            <div class="stat-box">
+                <h2 id="totalHired">0</h2>
+                <p>Hired</p>
+            </div>
+        </div>
+
+        <div class="job-list">
+            <h2 style="margin-bottom:15px;">Recent Jobs</h2>
+            <div id="jobContainer" class="empty">Loading...</div>
+        </div>
+
+    </div>
+</div>
+
 </div>
 
 <script>
 
-// LOGOUT
+// LOGOUT FIX (IMPORTANT)
 function logout(){
     localStorage.removeItem("isLoggedIn");
-    window.location.href = "Login.html";
+    window.location.href = "login.html";
 }
 
-// SAFE PARSE FUNCTION (IMPORTANT FIX)
-function getData(key) {
+// SAFE PARSE
+function getData(key){
     try {
         return JSON.parse(localStorage.getItem(key)) || [];
-    } catch (e) {
+    } catch(e){
         return [];
     }
 }
 
-// LOAD DATA
-function loadData() {
+function loadData(){
 
     let jobs = getData("jobs");
     let applicants = getData("applicants");
     let interviews = getData("interviews");
     let hired = getData("hired");
 
-    // SAFETY FIX
-    if (!Array.isArray(jobs)) jobs = [];
-    if (!Array.isArray(applicants)) applicants = [];
-    if (!Array.isArray(interviews)) interviews = [];
-    if (!Array.isArray(hired)) hired = [];
+    jobs = Array.isArray(jobs) ? jobs : [];
+    applicants = Array.isArray(applicants) ? applicants : [];
+    interviews = Array.isArray(interviews) ? interviews : [];
+    hired = Array.isArray(hired) ? hired : [];
 
     // COUNTS
     document.getElementById("totalJobs").innerText = jobs.length;
@@ -295,55 +244,38 @@ function loadData() {
     document.getElementById("totalInterviews").innerText = interviews.length;
     document.getElementById("totalHired").innerText = hired.length;
 
-    // JOB LIST
-    const jobContainer = document.getElementById("jobContainer");
+    const container = document.getElementById("jobContainer");
 
     if(jobs.length === 0){
-
-        jobContainer.innerHTML = `
-            <div class="empty">
-                No jobs posted yet
-            </div>
-        `;
-
+        container.innerHTML = `<div class="empty">No jobs posted yet</div>`;
         return;
     }
 
-    jobContainer.innerHTML = "";
+    container.innerHTML = "";
 
-    jobs.forEach((job, index) => {
+    jobs.slice().reverse().forEach(job => {
 
-    jobContainer.innerHTML += `
-
+        container.innerHTML += `
         <div class="job-item">
 
             <div class="job-info">
-
-                <h3>${job.title || "Untitled Job"}</h3>
-
-                <p>
-                    ${job.company || "No Company"} • 
-                    
-                </p>
-
-                <div class="job-description">
-                    ${job.description || "No description available"}
-                </div>
-
+                <h3>${job?.title || "Untitled Job"}</h3>
+                <p>${job?.company || "No Company"}</p>
+                <div>${job?.description || ""}</div>
             </div>
 
             <div class="job-date">
-                ${job.date || "Recently"}
+                ${job?.date || new Date().toLocaleDateString()}
             </div>
 
         </div>
-
-    `;
-
-});
+        `;
+    });
 }
 
+// AUTO REFRESH
 setInterval(loadData, 2000);
+loadData();
 
 </script>
 

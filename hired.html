@@ -12,6 +12,9 @@
     --primary:#7b5cf0;
     --secondary:#5a3ee6;
     --bg:#f5f6fa;
+    --card:#ffffff;
+    --text:#333;
+    --muted:#777;
 }
 
 *{
@@ -25,6 +28,7 @@ body{
     background:var(--bg);
 }
 
+/* LAYOUT */
 .container{
     display:flex;
     min-height:100vh;
@@ -38,9 +42,12 @@ body{
     padding:25px;
     display:flex;
     flex-direction:column;
+    justify-content:space-between;
 }
 
-.left h2{ font-size:22px; }
+.left h2{
+    font-size:22px;
+}
 
 .menu{
     margin-top:30px;
@@ -54,14 +61,18 @@ body{
     text-decoration:none;
     padding:12px;
     border-radius:10px;
+    font-size:14px;
+    transition:0.3s;
 }
 
 .menu a:hover{
     background:rgba(255,255,255,0.15);
+    transform:translateX(5px);
 }
 
 .menu a.active{
     background:rgba(255,255,255,0.25);
+    font-weight:600;
 }
 
 /* MAIN */
@@ -70,32 +81,39 @@ body{
     padding:30px;
 }
 
+/* CARD */
 .card{
-    background:#fff;
+    background:var(--card);
     padding:25px;
     border-radius:15px;
     box-shadow:0 5px 20px rgba(0,0,0,0.05);
     margin-top:20px;
 }
 
-/* HIRED CARD */
-.hired{
+/* TITLE */
+h1{
+    color:var(--text);
+}
+
+/* HIRED ITEM */
+.item{
     background:#fff;
     padding:18px;
     border-radius:12px;
-    margin-bottom:12px;
+    margin-top:12px;
     box-shadow:0 2px 10px rgba(0,0,0,0.05);
 }
 
-.hired h3{
+.item h3{
     color:var(--primary);
 }
 
-.hired p{
-    color:#777;
+.item p{
+    color:var(--muted);
     font-size:14px;
 }
 
+/* BADGE */
 .badge{
     display:inline-block;
     margin-top:8px;
@@ -121,7 +139,6 @@ button:hover{
     opacity:0.9;
 }
 </style>
-
 </head>
 
 <body>
@@ -157,17 +174,18 @@ button:hover{
 
 <script>
 
-// 🚪 LOGOUT
+// LOGOUT
 function logout(){
-    window.location.href = "index.html";
+    localStorage.removeItem("currentUser");
+    window.location = "index.html";
 }
 
-// 📦 LOAD
+// GET DATA
 function getHired(){
     return JSON.parse(localStorage.getItem("hired")) || [];
 }
 
-// 🎯 RENDER
+// RENDER
 function renderHired(){
 
     let hired = getHired();
@@ -179,7 +197,7 @@ function renderHired(){
     }
 
     container.innerHTML = hired.map((a, index) => `
-        <div class="hired">
+        <div class="item">
 
             <h3>${a?.name || "N/A"}</h3>
             <p><b>Position:</b> ${a?.position || "N/A"}</p>
@@ -189,15 +207,13 @@ function renderHired(){
 
             <br>
 
-            <button onclick="removeHired(${index})">
-                Remove
-            </button>
+            <button onclick="removeHired(${index})">Remove</button>
 
         </div>
     `).join("");
 }
 
-// 🗑 REMOVE
+// REMOVE
 function removeHired(index){
     let hired = getHired();
     hired.splice(index, 1);
@@ -205,7 +221,7 @@ function removeHired(index){
     renderHired();
 }
 
-// 🔄 AUTO REFRESH
+// AUTO UPDATE
 setInterval(renderHired, 2000);
 renderHired();
 

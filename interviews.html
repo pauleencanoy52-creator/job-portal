@@ -8,116 +8,136 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
+:root{
+    --primary:#7b5cf0;
+    --secondary:#5a3ee6;
+    --bg:#f5f6fa;
+    --card:#ffffff;
 }
 
-.container {
-    display: flex;
-    height: 100vh;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter', sans-serif;
+}
+
+body{
+    background:var(--bg);
+}
+
+.container{
+    display:flex;
+    min-height:100vh;
 }
 
 /* SIDEBAR */
-.left {
-    width: 25%;
-    min-width: 240px;
-    background: linear-gradient(135deg, #7b5cf0, #5a3ee6);
-    color: #fff;
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+.left{
+    width:250px;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    color:#fff;
+    padding:25px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
 }
 
-.logo h2 { font-size: 24px; }
-.logo p { font-size: 13px; opacity: 0.9; }
-
-.menu {
-    margin-top: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+.left h2{
+    font-size:22px;
 }
 
-.menu a {
-    color: #fff;
-    text-decoration: none;
-    padding: 12px 15px;
-    border-radius: 10px;
+.menu{
+    margin-top:30px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
 }
 
-.menu a:hover {
-    background: rgba(255,255,255,0.15);
+.menu a{
+    color:#fff;
+    text-decoration:none;
+    padding:12px;
+    border-radius:10px;
+    transition:0.3s;
 }
 
-.menu-logout {
-    margin-top: 10px;
-    cursor: pointer;
+.menu a:hover{
+    background:rgba(255,255,255,0.15);
+    transform:translateX(5px);
+}
+
+.menu a.active{
+    background:rgba(255,255,255,0.25);
 }
 
 /* MAIN */
-.right {
-    flex: 1;
-    background: #f7f7ff;
-    padding: 40px;
-    overflow-y: auto;
+.right{
+    flex:1;
+    padding:30px;
 }
 
-.header {
-    display: flex;
-    justify-content: space-between;
+/* CARD */
+.card{
+    background:#fff;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.05);
+    margin-top:20px;
 }
 
-.card {
-    margin-top: 25px;
-    background: #fff;
-    padding: 25px;
-    border-radius: 15px;
+/* INTERVIEW ITEM */
+.interview{
+    border:1px solid #eee;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:15px;
 }
 
-.interview {
-    border: 1px solid #eee;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 15px;
+/* INPUT */
+input{
+    width:100%;
+    padding:10px;
+    margin:8px 0;
+    border:1px solid #ddd;
+    border-radius:8px;
 }
 
-input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+/* STATUS */
+.status{
+    display:inline-block;
+    padding:4px 10px;
+    border-radius:20px;
+    font-size:12px;
 }
 
-.status {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 12px;
+.pending{ background:#fff3cd; }
+.scheduled{ background:#d1ecf1; }
+.done{ background:#d4edda; }
+
+/* BUTTONS */
+button{
+    background:var(--primary);
+    color:#fff;
+    border:none;
+    padding:8px 12px;
+    border-radius:8px;
+    cursor:pointer;
+    margin-top:5px;
+    transition:0.3s;
 }
 
-.pending { background: #fff3cd; }
-.scheduled { background: #d1ecf1; }
-.done { background: #d4edda; }
-
-.btn {
-    background: #7b5cf0;
-    color: #fff;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 5px;
+button:hover{
+    background:var(--secondary);
 }
 
-.btn.secondary { background:#17a2b8; }
-.btn.success { background:#28a745; }
-.btn.danger { background:#dc3545; }
+.danger{ background:#dc3545; }
+.danger:hover{ background:#b52a37; }
+
+.success{ background:#28a745; }
+.success:hover{ background:#1f7a32; }
+
+.secondary{ background:#17a2b8; }
+.secondary:hover{ background:#117a8b; }
 
 </style>
 </head>
@@ -129,10 +149,7 @@ input {
 <!-- SIDEBAR -->
 <div class="left">
     <div>
-        <div class="logo">
-            <h2>Job Portal</h2>
-            <p>Admin Panel</p>
-        </div>
+        <h2>Job Portal</h2>
 
         <div class="menu">
             <a href="dashboard.html">Dashboard</a>
@@ -140,21 +157,14 @@ input {
             <a href="applicants.html">Applicants</a>
             <a href="interviews.html" class="active">Interviews</a>
             <a href="hired.html">Hired</a>
-
-            <a class="menu-logout" onclick="logout()">Logout</a>
         </div>
     </div>
-
-    <p class="footer">© 2026 Job Portal System</p>
 </div>
 
 <!-- MAIN -->
 <div class="right">
 
-<div class="header">
-    <h1>Interviews</h1>
-    <span>Hello, Admin!</span>
-</div>
+<h1>Interviews</h1>
 
 <div class="card" id="interviewList"></div>
 
@@ -163,40 +173,33 @@ input {
 
 <script>
 
-/// 🚪 FIXED LOGOUT
+// LOGOUT (optional)
 function logout(){
+    localStorage.removeItem("isLoggedIn");
     window.location.href = "index.html";
 }
 
-/// 🔐 SAFE LOAD DATA
-let interviews = [];
-let hired = [];
-let rejected = [];
-
-function loadData(){
-    try {
-        interviews = JSON.parse(localStorage.getItem("interviews")) || [];
-        hired = JSON.parse(localStorage.getItem("hired")) || [];
-        rejected = JSON.parse(localStorage.getItem("rejected")) || [];
-
-        if(!Array.isArray(interviews)) interviews = [];
-    } catch(e){
-        interviews = [];
+// LOAD DATA
+function getData(key){
+    try{
+        return JSON.parse(localStorage.getItem(key)) || [];
+    }catch(e){
+        return [];
     }
 }
 
-/// 📌 RENDER
+// RENDER
 function renderInterviews(){
 
-    loadData();
-
+    let interviews = getData("interviews");
     let container = document.getElementById("interviewList");
-    container.innerHTML = "";
 
-    if(interviews.length === 0){
+    if(!interviews.length){
         container.innerHTML = "<p>No interviews yet</p>";
         return;
     }
+
+    container.innerHTML = "";
 
     interviews.forEach((a,i)=>{
 
@@ -208,29 +211,31 @@ function renderInterviews(){
         container.innerHTML += `
         <div class="interview">
 
-        <h3>${a.name}</h3>
-        <p>${a.position}</p>
+            <h3>${a.name}</h3>
+            <p>${a.position}</p>
 
-        <p>Date: ${a.date || "Not set"}</p>
-        <p>Time: ${a.time || "Not set"}</p>
+            <p>Date: ${a.date || "Not set"}</p>
+            <p>Time: ${a.time || "Not set"}</p>
 
-        ${status}
+            ${status}
 
-        <input type="date" id="d${i}">
-        <input type="time" id="t${i}">
+            <input type="date" id="d${i}">
+            <input type="time" id="t${i}">
 
-        <button class="btn" onclick="schedule(${i})">Schedule</button>
-        <button class="btn secondary" onclick="viewInterview(${i})">View</button>
-        <button class="btn success" onclick="completeInterview(${i})">Complete</button>
-        <button class="btn danger" onclick="rejectInterview(${i})">Reject</button>
+            <button onclick="schedule(${i})">Schedule</button>
+            <button class="secondary" onclick="viewInterview(${i})">View</button>
+            <button class="success" onclick="completeInterview(${i})">Complete</button>
+            <button class="danger" onclick="rejectInterview(${i})">Reject</button>
 
         </div>
         `;
     });
 }
 
-/// 📅 SCHEDULE
+// SCHEDULE
 function schedule(i){
+
+    let interviews = getData("interviews");
 
     let date = document.getElementById("d"+i).value;
     let time = document.getElementById("t"+i).value;
@@ -249,8 +254,10 @@ function schedule(i){
     renderInterviews();
 }
 
-/// 👁 VIEW
+// VIEW
 function viewInterview(i){
+    let interviews = getData("interviews");
+
     alert(
         interviews[i].name + "\n" +
         interviews[i].position + "\n" +
@@ -258,21 +265,11 @@ function viewInterview(i){
     );
 }
 
-/// ❌ REJECT
-function rejectInterview(i){
-
-    rejected.push(interviews[i]);
-
-    localStorage.setItem("rejected", JSON.stringify(rejected));
-
-    interviews.splice(i,1);
-    localStorage.setItem("interviews", JSON.stringify(interviews));
-
-    renderInterviews();
-}
-
-/// 🎉 COMPLETE (HIRED)
+// COMPLETE (MOVE TO HIRED)
 function completeInterview(i){
+
+    let interviews = getData("interviews");
+    let hired = getData("hired");
 
     let c = interviews[i];
 
@@ -283,9 +280,25 @@ function completeInterview(i){
         status: "Hired"
     });
 
+    interviews.splice(i,1);
+
     localStorage.setItem("hired", JSON.stringify(hired));
+    localStorage.setItem("interviews", JSON.stringify(interviews));
+
+    renderInterviews();
+}
+
+// REJECT
+function rejectInterview(i){
+
+    let interviews = getData("interviews");
+    let rejected = getData("rejected");
+
+    rejected.push(interviews[i]);
 
     interviews.splice(i,1);
+
+    localStorage.setItem("rejected", JSON.stringify(rejected));
     localStorage.setItem("interviews", JSON.stringify(interviews));
 
     renderInterviews();
